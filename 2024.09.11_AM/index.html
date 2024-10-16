@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="root"></div>
+    <script>
+        var h1= document.createElement('h1')
+        h1.innerText='UDU';
+        h1.id='H1';
+        h1.className='DEMO TEXT';
+        h1.style.color='red';
+        h1.style='color:blue;font-size:30px;background-color:black';
+        //console.dir(h1);
+        //document.body.appendChild(h1);
+        const root = document.getElementById('root');
+        root.appendChild(h1);
+    </script>
+</body>
+</html>
