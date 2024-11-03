@@ -1,7 +1,7 @@
 import './style.css';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 
-const ToDoItem = ({ id, title, dueDate, isDone, onDelete, onToggle }) => {
+const ToDoItem = ({ id, title, dueDate, isDone, onDelete, onToggle, onEdit }) => {
     return (
         <div className={`ToDoItem ${isDone ? 'Done' : 'Todo'}`}>
             <input type="checkbox" checked={isDone} onChange={() => onToggle(id)} />
@@ -10,7 +10,7 @@ const ToDoItem = ({ id, title, dueDate, isDone, onDelete, onToggle }) => {
                 <p className="DueDate">{dueDate}</p>
             </div>
             <div className="Action">
-                <EditOutlined />
+                <EditOutlined onClick={() => onEdit(id)} />
                 <DeleteOutlined onClick={() => onDelete(id)} />
             </div>
         </div>
