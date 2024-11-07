@@ -1,39 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ToDoItem from './ToDoItem';
 import { PlusCircleOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import AuthForm from './AuthForm';  
+import { Modal } from 'antd';  
 
 const ToDoList = () => {
-    const [tasks, setTasks] = useState([
-        { id: 1, title: 'Gửi email nộp bài tập về nhà', dueDate: 'Hôm nay', status: 'Todo' },
-        { id: 2, title: 'Học từ vựng tiếng anh mỗi ngày', dueDate: 'Ngày mai', status: 'Todo' },
-        { id: 3, title: 'Viết tiểu luận môn Triết học', dueDate: 'Tuần tới', status: 'Todo' },
-        { id: 4, title: 'Học lập trình với js', dueDate: 'Ngày kia', status: 'Todo' }
-    ]);
-
+    const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState({ title: '', dueDate: '' });
     const [isAdding, setIsAdding] = useState(false);
     const [editingTaskId, setEditingTaskId] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);  
+    const [authVisible, setAuthVisible] = useState(false);  
+    useEffect(() => {
+        const fetchTasks = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/todos');
+                setTasks(response.data);
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        };
 
-    const addTask = () => {
+        fetchTasks();
+    }, []);
+
+    const handleAuthCheck = () => {
+        if (!isAuthenticated) {
+            setAuthVisible(true);  
+            return false;
+        }
+        return true;
+    };
+
+    const addTask = async () => {
+        if (!handleAuthCheck()) return;  
         if (newTask.title && newTask.dueDate) {
-            setTasks([...tasks, { ...newTask, id: tasks.length + 1, status: 'Todo' }]);
-            setNewTask({ title: '', dueDate: '' });
-            setIsAdding(false);
+            try {
+                const response = await axios.post('http://localhost:5000/todos', newTask);
+                setTasks((prevTasks) => [...prevTasks, response.data]);
+                setNewTask({ title: '', dueDate: '' });
+                setIsAdding(false);
+            } catch (error) {
+                console.error('Error adding task:', error);
+            }
+        } else {
+            alert("Please fill in both fields.");
         }
     };
 
-    const deleteTask = (taskId) => {
-        setTasks(tasks.filter(task => task.id !== taskId));
+    const deleteTask = async (taskId) => {
+        if (!handleAuthCheck()) return;  
+        try {
+            await axios.delete(`http://localhost:5000/todos/${taskId}`);
+            setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+        } catch (error) {
+            console.error('Error deleting task:', error);
+        }
     };
 
-    const toggleTaskStatus = (taskId) => {
-        setTasks(tasks.map(task =>
-            task.id === taskId ? { ...task, status: task.status === 'Todo' ? 'Done' : 'Todo' } : task
-        ));
+    const toggleTaskStatus = async (taskId) => {
+        const task = tasks.find((t) => t.id === taskId);
+        if (task) {
+            const updatedTask = { ...task, status: task.status === 'Todo' ? 'Done' : 'Todo' };
+            try {
+                await axios.put(`http://localhost:5000/todos/${taskId}`, updatedTask);
+                setTasks((prevTasks) => prevTasks.map((t) => (t.id === taskId ? updatedTask : t)));
+            } catch (error) {
+                console.error('Error updating task:', error);
+            }
+        }
     };
 
     const editTask = (taskId) => {
-        const taskToEdit = tasks.find(task => task.id === taskId);
+        if (!handleAuthCheck()) return;  
+        const taskToEdit = tasks.find((task) => task.id === taskId);
         if (taskToEdit) {
             setNewTask({ title: taskToEdit.title, dueDate: taskToEdit.dueDate });
             setEditingTaskId(taskId);
@@ -41,18 +82,31 @@ const ToDoList = () => {
         }
     };
 
-    const updateTask = () => {
-        setTasks(tasks.map(task =>
-            task.id === editingTaskId ? { ...task, title: newTask.title, dueDate: newTask.dueDate } : task
-        ));
-        setNewTask({ title: '', dueDate: '' });
-        setEditingTaskId(null);
-        setIsAdding(false);
+    const updateTask = async () => {
+        if (!handleAuthCheck()) return;  
+        if (editingTaskId) {
+            try {
+                await axios.put(`http://localhost:5000/todos/${editingTaskId}`, newTask);
+                setTasks((prevTasks) => prevTasks.map((task) =>
+                    task.id === editingTaskId ? { ...task, title: newTask.title, dueDate: newTask.dueDate } : task
+                ));
+                setNewTask({ title: '', dueDate: '' });
+                setEditingTaskId(null);
+                setIsAdding(false);
+            } catch (error) {
+                console.error('Error updating task:', error);
+            }
+        }
+    };
+
+    const handleLoginSuccess = () => {
+        setIsAuthenticated(true);  
+        setAuthVisible(false);  
     };
 
     return (
         <div className="ToDoList" style={{ textAlign: 'center' }}>
-            <h1>My work 🎯</h1>
+            <h1>My Tasks 🎯</h1>
             <div>
                 {tasks.map((task) => (
                     <ToDoItem
@@ -62,7 +116,7 @@ const ToDoList = () => {
                         isDone={task.status === 'Done'}
                         onDelete={() => deleteTask(task.id)}
                         onToggle={() => toggleTaskStatus(task.id)}
-                        onEdit={() => editTask(task.id)} // Call edit function
+                        onEdit={() => editTask(task.id)}
                     />
                 ))}
             </div>
@@ -82,7 +136,7 @@ const ToDoList = () => {
                         onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
                     />
                     {editingTaskId ? (
-                        <button onClick={updateTask}>Update Task</button> // Update button
+                        <button onClick={updateTask}>Update Task</button>
                     ) : (
                         <button onClick={addTask}>Save Task</button>
                     )}
@@ -95,12 +149,21 @@ const ToDoList = () => {
                     onClick={() => {
                         setIsAdding(!isAdding);
                         if (isAdding) {
-                            setEditingTaskId(null); // Reset editing task when adding a new task
+                            setEditingTaskId(null);
                         }
                     }}
                 />
                 Add Task
             </div>
+
+            
+            <Modal
+                visible={authVisible}
+                onCancel={() => setAuthVisible(false)}  
+                footer={null}  
+            >
+                <AuthForm onLoginSuccess={handleLoginSuccess} />  
+            </Modal>
         </div>
     );
 };
