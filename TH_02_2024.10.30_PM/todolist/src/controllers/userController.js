@@ -2,11 +2,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
 
-// Đăng ký người dùng
+
 exports.register = (req, res) => {
     const { username, password } = req.body;
 
-    // Mã hóa mật khẩu
+    
     bcrypt.hash(password, 10, (err, hash) => {
         if (err) return res.status(500).send(err);
 
@@ -17,7 +17,7 @@ exports.register = (req, res) => {
     });
 };
 
-// Đăng nhập người dùng
+
 exports.login = (req, res) => {
     const { username, password } = req.body;
 
@@ -27,12 +27,12 @@ exports.login = (req, res) => {
 
         const user = results[0];
 
-        // So sánh mật khẩu
+        
         bcrypt.compare(password, user.password, (err, match) => {
             if (err) return res.status(500).send(err);
             if (!match) return res.status(401).send('Invalid password');
 
-            // Tạo token nếu mật khẩu đúng
+            
             const token = jwt.sign({ id: user.id }, 'secret', { expiresIn: '1h' });
             res.json({ token });
         });
