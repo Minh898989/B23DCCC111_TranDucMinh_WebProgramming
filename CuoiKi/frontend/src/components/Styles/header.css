@@ -1,0 +1,203 @@
+.header {
+  background-color: #f70c10;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+.logo-image {
+  height: 90px; 
+  width: auto;
+}
+.logo-text {
+  margin-top: 5px; /* Add space between logo and text */
+  font-size: 18px; /* Adjust text size */
+  font-weight: bold;
+  
+  color: white; /* Set text color to white */
+  text-decoration: none; 
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.search-bar {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  width: 550px;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  color: #666;
+  font-size: 16px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.auth-button {
+  background-color: #fff;
+  color: #ff4d4f;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.auth-button:hover {
+  background-color: #ffc1c3;
+}
+
+.location-icon {
+  font-size: 24px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.cart-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+.map-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.map-container {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  width: 90%; /* Chiếm 90% chiều rộng màn hình */
+  max-width: 600px; /* Giới hạn kích thước tối đa */
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.map-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.confirm-button, .cancel-button {
+  padding: 8px 15px;
+  margin: 0 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.confirm-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.cancel-button {
+  background-color: #f44336;
+  color: white;
+}
+
+.map-container .map-content {
+  height: 200px; /* Chiều cao nhỏ hơn cho bản đồ */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+.location-text {
+  white-space: normal; /* Cho phép xuống dòng */
+  word-wrap: break-word; /* Đảm bảo từ dài sẽ xuống dòng nếu cần */
+  word-break: break-word; /* Ngắt từ nếu từ quá dài */
+  max-width: 400px; /* Giới hạn chiều rộng để tránh tràn ra ngoài */
+  display: block; /* Đảm bảo phần văn bản chiếm toàn bộ chiều rộng của nó */
+}
+/* Styles for the Registration Modal */
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-content input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.confirm-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-button {
+  background-color: #dc3545;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm-button:hover,
+.cancel-button:hover {
+  opacity: 0.9;
+}
