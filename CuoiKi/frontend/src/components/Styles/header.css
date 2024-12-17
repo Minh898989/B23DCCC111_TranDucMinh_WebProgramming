@@ -27,7 +27,7 @@
 .search-container {
   display: flex;
   align-items: center;
-  position: relative;
+  position:relative;
 }
 
 .search-bar {
@@ -92,7 +92,7 @@
   padding: 15px;
   border-radius: 8px;
   width: 90%; /* Chiếm 90% chiều rộng màn hình */
-  max-width: 600px; /* Giới hạn kích thước tối đa */
+  max-width: 800px; /* Giới hạn kích thước tối đa */
   text-align: center;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -123,7 +123,7 @@
 }
 
 .map-container .map-content {
-  height: 200px; /* Chiều cao nhỏ hơn cho bản đồ */
+  height: 300px; /* Chiều cao nhỏ hơn cho bản đồ */
   border: 1px solid #ccc;
   border-radius: 5px;
   overflow: hidden;
@@ -133,7 +133,7 @@
   white-space: normal; /* Cho phép xuống dòng */
   word-wrap: break-word; /* Đảm bảo từ dài sẽ xuống dòng nếu cần */
   word-break: break-word; /* Ngắt từ nếu từ quá dài */
-  max-width: 400px; /* Giới hạn chiều rộng để tránh tràn ra ngoài */
+  max-width: 300px; /* Giới hạn chiều rộng để tránh tràn ra ngoài */
   display: block; /* Đảm bảo phần văn bản chiếm toàn bộ chiều rộng của nó */
 }
 /* Styles for the Registration Modal */

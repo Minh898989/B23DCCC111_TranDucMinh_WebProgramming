@@ -49,6 +49,7 @@ const registerUser = (req, res) => {
 const verifyOTP = (req, res) => {
     const { email, otp } = req.body;
 
+    // Tìm người dùng theo email
     findUserByEmail(email, (err, user) => {
         if (err) return res.status(500).json({ message: 'Database error.' });
         if (!user.length) return res.status(404).json({ message: 'User not found.' });
@@ -59,14 +60,18 @@ const verifyOTP = (req, res) => {
             if (!results.length) return res.status(400).json({ message: 'Invalid or expired OTP.' });
 
             const otpRecord = results[0];
+
+            // Kiểm tra xem OTP đã hết hạn chưa
             if (new Date() > otpRecord.expires_at) {
                 return res.status(400).json({ message: 'OTP has expired.' });
             }
 
+            // Cập nhật trạng thái xác minh người dùng
             const verifyUserQuery = 'UPDATE users SET is_verified = TRUE WHERE id = ?';
             db.query(verifyUserQuery, [user[0].id], (err) => {
                 if (err) return res.status(500).json({ message: 'Error verifying user.' });
 
+                // Xóa OTP đã xác minh
                 const deleteOTPQuery = 'DELETE FROM user_otps WHERE user_id = ?';
                 db.query(deleteOTPQuery, [user[0].id]);
 
@@ -75,6 +80,7 @@ const verifyOTP = (req, res) => {
         });
     });
 };
+
 const loginUser = (req, res) => {
     const { name, password } = req.body;
 
