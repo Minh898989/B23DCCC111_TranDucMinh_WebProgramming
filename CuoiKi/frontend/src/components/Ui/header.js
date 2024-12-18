@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaShoppingCart, FaSearch } from 'react-icons/fa';
+import { FaShoppingCart, FaSearch,FaUserPlus ,FaUserAlt,FaSmile } from 'react-icons/fa';
 import { MdLocationOn } from 'react-icons/md';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -10,7 +10,7 @@ const Header = () => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
-  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false); // OTP Modal state
+  const [isOTPModalOpen, setIsOTPModalOpen] = useState(false); // For register modal
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 21.0285, // Default latitude for Hanoi
     lng: 105.8542, // Default longitude for Hanoi
@@ -18,9 +18,82 @@ const Header = () => {
   const [locationText, setLocationText] = useState('');
   const [username, setUsername] = useState('');
   const [loginData, setLoginData] = useState({ name: '', password: '' });
-  const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' });
-  const [otp, setOtp] = useState(''); // OTP state
-  const [otpSent, setOtpSent] = useState(false); // Check if OTP is sent
+  const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' }); // For registration
+  const [otpCode, setOtpCode] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false);
+  // Handle input change for both login and registration
+  const handleInputChange = (e, type) => {
+    const { name, value } = e.target;
+    if (type === 'login') {
+      setLoginData(prev => ({ ...prev, [name]: value }));
+    } else {
+      setRegisterData(prev => ({ ...prev, [name]: value }));
+    }
+  };
+
+  // Handle login form submission
+  const handleLoginSubmit = async () => {
+    try {
+      const response = await axios.post('http://localhost:5000/api/users/login', loginData);
+      if (response.status === 200) {
+        setUsername(loginData.name);
+        setLoginSuccess(true);
+        setIsLoginModalOpen(false);
+      } else {
+        alert('Đăng nhập thất bại.');
+      }
+    } catch (error) {
+      alert('Lỗi khi đăng nhập: ' + error.message);
+    }
+  };
+
+  // Handle registration form submission
+// Gửi yêu cầu đăng ký và nhận OTP
+const handleRegisterSubmit = async () => {
+  try {
+    // Gửi dữ liệu đăng ký tới backend
+    const response = await axios.post('http://localhost:5000/api/users/register', {
+      name: registerData.name,
+      email: registerData.email,
+      password: registerData.password,
+     
+
+  
+  });
+
+    if (response.status === 200) {
+      alert('Vui lòng kiểm tra email để xác nhận OTP.');
+      setIsRegisterModalOpen(false); // Đóng modal đăng ký
+      setIsOTPModalOpen(true);       // Mở modal xác minh OTP
+    }
+  } catch (error) {
+    // Hiển thị thông báo lỗi chi tiết từ backend
+    console.error('Lỗi đăng ký:', error.response?.data || error.message);
+    alert('Lỗi khi đăng ký: ' + (error.response?.data.message || error.message));
+  }
+};
+
+// Gửi yêu cầu xác minh OTP
+const handleOTPSubmit = async () => {
+  try {
+    // Gửi email và OTP tới backend
+    const response = await axios.post('http://localhost:5000/api/users/otp', {
+      email: registerData.email, // Email từ dữ liệu đăng ký
+      otp: otpCode,              // OTP nhập từ người dùng
+    });
+
+    if (response.status === 201) { // 201 vì API trả về khi tạo user thành công
+      alert('Xác minh thành công! Tài khoản đã được đăng ký.');
+      setIsOTPModalOpen(false); // Đóng modal OTP
+      setRegisterData({ name: '', email: '', password: '' });
+      setOtpCode('');
+    }
+  } catch (error) {
+    // Xử lý lỗi từ server
+    console.error('Lỗi OTP:', error.response?.data || error.message);
+    alert('Lỗi khi xác minh OTP: ' + (error.response?.data.message || error.message));
+  }
+};
 
   const getAddressFromCoordinates = async (lat, lng) => {
     const response = await fetch(
@@ -43,68 +116,6 @@ const Header = () => {
 
   const updateLocation = () => {
     setIsMapOpen(true);
-  };
-
-  const handleInputChange = (e, type) => {
-    const { name, value } = e.target;
-    if (type === 'login') {
-      setLoginData(prev => ({ ...prev, [name]: value }));
-    } else {
-      setRegisterData(prev => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleLoginSubmit = async () => {
-    try {
-      const response = await axios.post('http://localhost:5000/api/users/login', loginData);
-      if (response.status === 200) {
-        setUsername(loginData.name);
-        setIsLoginModalOpen(false);
-      } else {
-        alert('Đăng nhập thất bại.');
-      }
-    } catch (error) {
-      alert('Lỗi khi đăng nhập: ' + error.message);
-    }
-  };
-
-  const handleRegisterSubmit = async () => {
-    if (!otpSent) {
-      try {
-        // Send OTP request
-        const response = await axios.post('http://localhost:5000/api/users/otp', {
-          email: registerData.email
-        });
-        console.log('OTP sent response:', response);
-        if (response.status === 200) {
-          setOtpSent(true);
-          setIsOtpModalOpen(true); // Open OTP modal after OTP is sent
-          alert('Mã OTP đã được gửi đến email của bạn.');
-        } else {
-          alert('Gửi mã OTP thất bại.');
-        }
-      } catch (error) {
-        alert('Lỗi khi gửi mã OTP: ' + error.message);
-      }
-    } else {
-      // Verify OTP and complete registration
-      try {
-        const response = await axios.post('http://localhost:5000/api/users/register', { ...registerData, otp });
-        console.log('Full response:', response); 
-        if (response.status === 200) {
-          alert('Đăng ký thành công! Vui lòng đăng nhập.');
-          setIsRegisterModalOpen(false);
-        } else {
-          alert('Đăng ký thất bại.');
-        }
-      } catch (error) {
-        alert('Lỗi khi đăng ký: ' + error.message);
-      }
-    }
-  };
-
-  const handleOtpInputChange = (e) => {
-    setOtp(e.target.value);
   };
 
   const LocationUpdater = () => {
@@ -139,19 +150,30 @@ const Header = () => {
           {!username ? (
             <>
               <button className="auth-button" onClick={() => setIsLoginModalOpen(true)}>
+              <FaUserAlt className="auth-icon" />
                 Đăng nhập
               </button>
               <button className="auth-button" onClick={() => setIsRegisterModalOpen(true)}>
+              <FaUserPlus className="auth-icon" />
                 Đăng ký
               </button>
             </>
           ) : (
+            <div className="user-info">
             <span className="username">Xin chào, {username}</span>
+            {loginSuccess && (
+  <FaSmile className="smiley-icon animated-smile" style={{ color: '#ffcc00' }} />
+)}
+
+          </div>
+           
           )}
           <FaShoppingCart className="cart-icon" />
+          
         </div>
+        
       </header>
-
+      
       {/* Map Modal */}
       {isMapOpen && (
         <div className="modal-overlay">
@@ -221,7 +243,7 @@ const Header = () => {
             <input
               type="text"
               name="name"
-              placeholder="Tên người dùng"
+              placeholder="Tên"
               value={registerData.name}
               onChange={(e) => handleInputChange(e, 'register')}
             />
@@ -241,7 +263,7 @@ const Header = () => {
             />
             <div className="modal-actions">
               <button onClick={handleRegisterSubmit} className="confirm-button">
-                {otpSent ? 'Xác nhận OTP' : 'Đăng ký'}
+                Gửi Mã OTP
               </button>
               <button onClick={() => setIsRegisterModalOpen(false)} className="cancel-button">
                 Hủy
@@ -250,23 +272,22 @@ const Header = () => {
           </div>
         </div>
       )}
-
-      {/* OTP Modal */}
-      {isOtpModalOpen && (
+       {isOTPModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Nhập mã OTP</h2>
+            <h2>Xác minh OTP</h2>
+       
             <input
               type="text"
-              placeholder="Mã OTP"
-              value={otp}
-              onChange={handleOtpInputChange}
+              placeholder="Nhập mã OTP"
+              value={otpCode}
+              onChange={(e) => setOtpCode(e.target.value)}
             />
             <div className="modal-actions">
-              <button onClick={handleRegisterSubmit} className="confirm-button">
-                Xác nhận
+              <button onClick={handleOTPSubmit} className="confirm-button">
+                Xác minh
               </button>
-              <button onClick={() => setIsOtpModalOpen(false)} className="cancel-button">
+              <button onClick={() => setIsOTPModalOpen(false)} className="cancel-button">
                 Hủy
               </button>
             </div>
@@ -278,3 +299,4 @@ const Header = () => {
 };
 
 export default Header;
+

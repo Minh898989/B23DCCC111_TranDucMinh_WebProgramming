@@ -1,86 +1,97 @@
 const transporter = require('../configs/email');
-const { createUser, findUserByEmail, findUserByName } = require('../models/userModel');
+const { createUser, findUserByEmail } = require('../models/userModel');
 const db = require('../configs/db');
 const bcrypt = require('bcrypt');
 
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
+// Step 1: Register User - Store OTP but delay user creation
 const registerUser = (req, res) => {
     const { name, email, password } = req.body;
+
+    // Check if the email already exists
     findUserByEmail(email, async (err, user) => {
         if (err) return res.status(500).json({ message: 'Database error.' });
         if (user.length) return res.status(400).json({ message: 'Email already exists.' });
 
+        // Hash password and generate OTP
         const hashedPassword = await bcrypt.hash(password, 10);
+        const otp = generateOTP();
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
 
-        createUser(name, email, hashedPassword, (err, result) => {
-            if (err) return res.status(500).json({ message: 'Error creating user.' });
+        // Temporarily save OTP, name, email, and hashed password
+        const query = `
+            INSERT INTO user_otps (name, email, hashed_password, otp_code, expires_at)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        db.query(query, [name, email, hashedPassword, otp, expiresAt], (err) => {
+            if (err) return res.status(500).json({ message: 'Error saving OTP.' });
 
-            const userId = result.insertId;
-            const otp = generateOTP();
-            const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+            // Send OTP via email
+            const mailOptions = {
+                from: 'minhhh270805@gmail.com',
+                to: email,
+                subject: 'Your OTP Code',
+                text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
+            };
 
-            const query = 'INSERT INTO user_otps (user_id, otp_code, expires_at) VALUES (?, ?, ?)';
-            db.query(query, [userId, otp, expiresAt], (err) => {
-                if (err) return res.status(500).json({ message: 'Error saving OTP.' });
+            transporter.sendMail(mailOptions, (error) => {
+                if (error) {
+                    console.error('Error while sending email:', error);
+                    return res.status(500).json({ message: 'Failed to send OTP email.' });
+                }
 
-                const mailOptions = {
-                    from: 'minhhh270805@gmail.com',
-                    to: email,
-                    subject: 'Your OTP Code',
-                    text: `Your OTP code is ${otp}. It will expire in 10 minutes.`,
-                };
-
-                transporter.sendMail(mailOptions, (error) => {
-                    if (error) {
-                        console.error('Error while sending email:', error);
-                        return res.status(500).json({ message: 'Failed to send OTP email.' });
-                    }
-
-                    res.status(201).json({
-                        message: 'User registered successfully. OTP sent to email.',
-                        otpSent: true,
-                    });
+                res.status(200).json({
+                    message: 'OTP sent to email. Please verify to complete registration.',
+                    otpSent: true,
                 });
             });
         });
     });
 };
+
+// Step 2: Verify OTP and Create User
 const verifyOTP = (req, res) => {
     const { email, otp } = req.body;
 
-    // Tìm người dùng theo email
-    findUserByEmail(email, (err, user) => {
+    // Retrieve the pending user info from user_otps table
+    const query = 'SELECT * FROM user_otps WHERE email = ? AND otp_code = ?';
+    db.query(query, [email, otp], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error.' });
-        if (!user.length) return res.status(404).json({ message: 'User not found.' });
+        if (!results.length) return res.status(400).json({ message: 'Invalid or expired OTP.' });
 
-        const query = 'SELECT * FROM user_otps WHERE user_id = ? AND otp_code = ?';
-        db.query(query, [user[0].id, otp], (err, results) => {
-            if (err) return res.status(500).json({ message: 'Database error.' });
-            if (!results.length) return res.status(400).json({ message: 'Invalid or expired OTP.' });
+        const otpRecord = results[0];
 
-            const otpRecord = results[0];
+        // Check if the OTP has expired
+        if (new Date() > otpRecord.expires_at) {
+            return res.status(400).json({ message: 'OTP has expired.' });
+        }
 
-            // Kiểm tra xem OTP đã hết hạn chưa
-            if (new Date() > otpRecord.expires_at) {
-                return res.status(400).json({ message: 'OTP has expired.' });
-            }
+        // Create user in users table
+        const { name, email, hashed_password } = otpRecord;
+        createUser(name, email, hashed_password, (err) => {
+            if (err) return res.status(500).json({ message: 'Error creating user.' });
 
-            // Cập nhật trạng thái xác minh người dùng
-            const verifyUserQuery = 'UPDATE users SET is_verified = TRUE WHERE id = ?';
-            db.query(verifyUserQuery, [user[0].id], (err) => {
-                if (err) return res.status(500).json({ message: 'Error verifying user.' });
+            // Set is_verified to 1 in the users table
+            const updateVerifiedQuery = `
+                UPDATE users SET is_verified = 1 WHERE email = ?
+            `;
+            db.query(updateVerifiedQuery, [email], (err) => {
+                if (err) return res.status(500).json({ message: 'Error updating verification status.' });
 
-                // Xóa OTP đã xác minh
-                const deleteOTPQuery = 'DELETE FROM user_otps WHERE user_id = ?';
-                db.query(deleteOTPQuery, [user[0].id]);
+                // Delete the OTP record after successful verification
+                const deleteOTPQuery = 'DELETE FROM user_otps WHERE email = ?';
+                db.query(deleteOTPQuery, [email]);
 
-                res.status(200).json({ message: 'User verified successfully.' });
+                res.status(201).json({ message: 'User registered and verified successfully.' });
             });
         });
     });
 };
 
+
+
+// Step 3: Login User
 const loginUser = (req, res) => {
     const { name, password } = req.body;
 
@@ -89,9 +100,6 @@ const loginUser = (req, res) => {
         if (!user.length) return res.status(404).json({ message: 'User not found.' });
 
         const verifiedUser = user[0];
-        if (!verifiedUser.is_verified) {
-            return res.status(400).json({ message: 'User email is not verified.' });
-        }
 
         bcrypt.compare(password, verifiedUser.password, (err, isMatch) => {
             if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
@@ -101,5 +109,11 @@ const loginUser = (req, res) => {
         });
     });
 };
+// Assuming this is within the same file
+const findUserByName = (name, callback) => {
+    const query = 'SELECT * FROM users WHERE name = ?';
+    db.query(query, [name], callback);
+};
 
-module.exports = { registerUser, verifyOTP, loginUser };
+
+module.exports = { registerUser, verifyOTP, loginUser};

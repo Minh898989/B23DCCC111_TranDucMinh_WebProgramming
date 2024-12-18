@@ -1,3 +1,4 @@
+/* Header Styles */
 .header {
   background-color: #f70c10;
   padding: 15px 20px;
@@ -5,76 +6,111 @@
   justify-content: space-between;
   align-items: center;
   color: #fff;
+ 
+  position: relative;
 }
+
 
 .logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-.logo-image {
-  height: 90px; 
-  width: auto;
-}
-.logo-text {
-  margin-top: 5px; /* Add space between logo and text */
-  font-size: 18px; /* Adjust text size */
-  font-weight: bold;
-  
-  color: white; /* Set text color to white */
-  text-decoration: none; 
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 30px;
 }
 
+.logo-image {
+  height: 80px; 
+  width: auto;
+
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  text-decoration: none;
+}
+
+/* Search Bar */
 .search-container {
   display: flex;
   align-items: center;
-  position:relative;
+  position: relative;
 }
 
 .search-bar {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  width: 550px;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  width: 500px;
+  outline: none;
+  transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-bar:focus {
+  box-shadow: 0 0 8px rgba(247, 12, 16, 0.5);
+  border-color: #f70c10;
 }
 
 .search-icon {
   position: absolute;
-  right: 10px;
-  color: #666;
-  font-size: 16px;
+  right: 15px;
+  color: #888;
+  font-size: 18px;
 }
 
+/* Header Actions */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
+  margin-right: 40px; 
 }
 
 .auth-button {
   background-color: #fff;
-  color: #ff4d4f;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 5px;
+  color: #f70c10;
+  border: 1px solid #f70c10;
+  padding: 8px 15px;
+  border-radius: 20px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
 }
 
 .auth-button:hover {
-  background-color: #ffc1c3;
+  background-color: #f70c10;
+  color: #fff;
+  border-color: transparent;
 }
 
-.location-icon {
+.location-icon,
+.cart-icon {
   font-size: 24px;
   color: #fff;
   cursor: pointer;
+  transition: transform 0.3s;
+  margin-left: 40px;
 }
 
-.cart-icon {
-  font-size: 24px;
-  cursor: pointer;
+.location-icon:hover,
+.cart-icon:hover {
+  transform: scale(1.2);
 }
+.auth-icon {
+  margin-right: 8px; /* Adds space between the icon and the text */
+  font-size: 18px; /* Adjusts the size of the icon */
+}
+.location-text {
+  white-space: normal; /* Cho phép xuống dòng */
+  word-wrap: break-word; /* Đảm bảo từ dài sẽ xuống dòng nếu cần */
+  word-break: break-word; /* Ngắt từ nếu từ quá dài */
+  max-width: 250px; /* Giới hạn chiều rộng để tránh tràn ra ngoài */
+  display: block; /* Đảm bảo phần văn bản chiếm toàn bộ chiều rộng của nó */
+}
+
+
+/* Map Modal */
 .map-modal {
   position: fixed;
   top: 0;
@@ -85,58 +121,74 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 9999;
 }
 
 .map-container {
+ 
   background: white;
-  padding: 15px;
-  border-radius: 8px;
-  width: 90%; /* Chiếm 90% chiều rộng màn hình */
-  max-width: 800px; /* Giới hạn kích thước tối đa */
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.map-content {
+
+  height: 300px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
 }
 
 .map-actions {
-  margin-top: 10px;
+  
+  margin-bottom: 20px;
+  margin-bottom: 20px;
+  margin-top: 20px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 15px;
 }
 
-.confirm-button, .cancel-button {
-  padding: 8px 15px;
-  margin: 0 5px;
+.confirm-button,
+.cancel-button {
+  padding: 10px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 20px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
+  transition: all 0.3s;
+  
 }
 
 .confirm-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.confirm-button:hover {
+  background-color: #45a049;
 }
 
 .cancel-button {
   background-color: #f44336;
   color: white;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.map-container .map-content {
-  height: 300px; /* Chiều cao nhỏ hơn cho bản đồ */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  overflow: hidden;
-  margin-bottom: 10px;
+.cancel-button:hover {
+  background-color: #e53935;
 }
-.location-text {
-  white-space: normal; /* Cho phép xuống dòng */
-  word-wrap: break-word; /* Đảm bảo từ dài sẽ xuống dòng nếu cần */
-  word-break: break-word; /* Ngắt từ nếu từ quá dài */
-  max-width: 300px; /* Giới hạn chiều rộng để tránh tràn ra ngoài */
-  display: block; /* Đảm bảo phần văn bản chiếm toàn bộ chiều rộng của nó */
-}
-/* Styles for the Registration Modal */
+
+
+/* Modal Overlay (Căn giữa modal) */
 /* Modal Overlay */
 .modal-overlay {
   position: fixed;
@@ -144,60 +196,132 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6); /* Darker overlay */
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
   z-index: 1000;
+  animation: fadeInOverlay 0.4s ease-in-out; /* Fade in effect for overlay */
 }
 
+/* Modal Content */
 .modal-content {
-  background: white;
-  border-radius: 8px;
+  background: #ffffff; /* Solid background for cleaner look */
+  border-radius: 12px; /* Rounder corners */
   width: 90%;
-  max-width: 400px;
-  padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 420px; /* Slightly larger width */
+  padding: 25px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1); /* Larger shadow for depth */
+  text-align: center;
+  position: relative;
+  animation: slideIn 0.6s ease-out; /* Slide in effect */
 }
 
+/* Title */
 .modal-content h2 {
   margin-bottom: 20px;
-  text-align: center;
+  font-size: 26px; /* Larger font size for the title */
+  font-weight: 600;
+  color: #333;
+}
+
+/* Input Fields */
+.modal-content .input-wrapper {
+  position: relative;
+  margin-bottom: 25px; /* Reduced margin between input fields */
 }
 
 .modal-content input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 14px 18px;
   border: 1px solid #ccc;
-  border-radius: 4px;
+  border-radius: 10px;
   font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  margin-bottom: 12px; /* Reduced margin for better spacing */
 }
 
+.modal-content input:focus {
+  border-color: #5cb85c;
+  box-shadow: 0 0 15px rgba(92, 184, 92, 0.3);
+  outline: none;
+  transform: translateY(-2px);
+}
+
+/* Buttons */
 .modal-actions {
   display: flex;
   justify-content: space-between;
+  gap: 20px; /* Increased gap between buttons */
+}
+
+.confirm-button,
+.cancel-button {
+  flex: 1;
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .confirm-button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background: linear-gradient(135deg, #28a745, #218838);
+  box-shadow: 0 6px 15px rgba(40, 167, 69, 0.3);
 }
 
 .cancel-button {
-  background-color: #dc3545;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
+  background: linear-gradient(135deg, #f44336, #d32f2f);
+  box-shadow: 0 6px 15px rgba(244, 67, 54, 0.3);
 }
 
 .confirm-button:hover,
 .cancel-button:hover {
-  opacity: 0.9;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
 }
+
+/* Keyframe Animations */
+@keyframes fadeInOverlay {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(-30px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.smiley-icon {
+  font-size: 15px;
+  transition: transform 0.5s ease;
+}
+
+.animated-smile {
+  transform: rotate(360deg) scale(1.5);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: bold;
+}
+
