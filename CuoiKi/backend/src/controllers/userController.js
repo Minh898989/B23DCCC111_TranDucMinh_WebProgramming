@@ -93,22 +93,30 @@ const verifyOTP = (req, res) => {
 
 // Step 3: Login User
 const loginUser = (req, res) => {
-    const { name, password } = req.body;
-
-    findUserByName(name, (err, user) => {
-        if (err) return res.status(500).json({ message: 'Database error.' });
-        if (!user.length) return res.status(404).json({ message: 'User not found.' });
-
-        const verifiedUser = user[0];
-
-        bcrypt.compare(password, verifiedUser.password, (err, isMatch) => {
-            if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
-            if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
-
-            res.status(200).json({ message: 'Login successful.', userId: verifiedUser.id });
+    const { email, password } = req.body;
+  
+    // Find the user by email
+    findUserByEmail(email, (err, user) => {
+      if (err) return res.status(500).json({ message: 'Database error.' });
+      if (!user.length) return res.status(404).json({ message: 'User not found.' });
+  
+      const verifiedUser = user[0];
+  
+      // Compare the provided password with the stored hashed password
+      bcrypt.compare(password, verifiedUser.password, (err, isMatch) => {
+        if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
+        if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
+  
+        // Successful login
+        res.status(200).json({
+          message: 'Login successful.',
+          userId: verifiedUser.id,
+          userName: verifiedUser.name, // Send the name for the greeting
         });
+      });
     });
-};
+  };
+  
 // Assuming this is within the same file
 const findUserByName = (name, callback) => {
     const query = 'SELECT * FROM users WHERE name = ?';

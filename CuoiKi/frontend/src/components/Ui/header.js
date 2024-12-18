@@ -17,7 +17,7 @@ const Header = () => {
   });
   const [locationText, setLocationText] = useState('');
   const [username, setUsername] = useState('');
-  const [loginData, setLoginData] = useState({ name: '', password: '' });
+  const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' }); // For registration
   const [otpCode, setOtpCode] = useState('');
   const [loginSuccess, setLoginSuccess] = useState(false);
@@ -36,7 +36,7 @@ const Header = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', loginData);
       if (response.status === 200) {
-        setUsername(loginData.name);
+        setUsername(response.data.userName);
         setLoginSuccess(true);
         setIsLoginModalOpen(false);
       } else {
@@ -210,10 +210,10 @@ const handleOTPSubmit = async () => {
           <div className="modal-content">
             <h2>Đăng nhập</h2>
             <input
-              type="text"
-              name="name"
-              placeholder="Tên đăng nhập"
-              value={loginData.name}
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={loginData.email}
               onChange={(e) => handleInputChange(e, 'login')}
             />
             <input
@@ -299,4 +299,3 @@ const handleOTPSubmit = async () => {
 };
 
 export default Header;
-
