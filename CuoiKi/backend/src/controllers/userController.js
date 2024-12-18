@@ -2,7 +2,36 @@ const transporter = require('../configs/email');
 const { createUser, findUserByEmail } = require('../models/userModel');
 const db = require('../configs/db');
 const bcrypt = require('bcrypt');
+const initializeManagerAccount = () => {
+    const defaultManager = {
+        name: 'Admin',
+        email: 'minhhh270805@gmail.com',
+        password: '27082005', // Thay thế bằng mật khẩu mạnh hơn trong thực tế
+    };
 
+    const query = 'SELECT * FROM users WHERE email = ?';
+    db.query(query, [defaultManager.email], async (err, results) => {
+        if (err) {
+            console.error('Error checking for manager account:', err);
+            return;
+        }
+
+        if (!results.length) {
+            const hashedPassword = await bcrypt.hash(defaultManager.password, 10);
+            const insertQuery = `
+                INSERT INTO users (name, email, password, role, is_verified) 
+                VALUES (?, ?, ?, 'manager', 1)
+            `;
+            db.query(insertQuery, [defaultManager.name, defaultManager.email, hashedPassword], (err) => {
+                if (err) {
+                    console.error('Error creating manager account:', err);
+                } else {
+                    console.log('Default manager account created successfully.');
+                }
+            });
+        }
+    });
+};
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
 // Step 1: Register User - Store OTP but delay user creation
@@ -124,4 +153,4 @@ const findUserByName = (name, callback) => {
 };
 
 
-module.exports = { registerUser, verifyOTP, loginUser};
+module.exports = { initializeManagerAccount,registerUser, verifyOTP, loginUser};
