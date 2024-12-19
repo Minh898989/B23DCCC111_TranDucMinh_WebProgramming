@@ -22,10 +22,10 @@ const foodController = {
     // Thêm thực phẩm mới
     addFood: (req, res) => {
         const foodData = req.body;
-        const { name, price, description, image_url, expiry_date, entry_date, quantity } = foodData;
+        const { name, price, description, image_url, expiry_date, entry_date, quantity,supplier } = foodData;
 
         // Kiểm tra đầu vào
-        if (!name || !price || !description || !image_url || !expiry_date || !entry_date || quantity == null) {
+        if (!name || !price || !description || !image_url || !expiry_date || !entry_date || quantity == null  || supplier) {
             return res.status(400).json({ message: 'Vui lòng cung cấp đầy đủ thông tin' });
         }
 
@@ -68,10 +68,10 @@ const foodController = {
     updateFoodById: (req, res) => {
         const { id } = req.params;
         const foodData = req.body;
-        const { name, price, description, image_url, expiry_date, entry_date, quantity } = foodData;
+        const { name, price, description, image_url, expiry_date, entry_date, quantity,supplier } = foodData;
 
         // Kiểm tra đầu vào
-        if (!name || !price || !description || !image_url || !expiry_date || !entry_date || quantity == null) {
+        if (!name || !price || !description || !image_url || !expiry_date || !entry_date || quantity == null  || supplier) {
             return res.status(400).json({ message: 'Vui lòng cung cấp đầy đủ thông tin' });
         }
 

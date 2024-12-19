@@ -140,7 +140,9 @@ const loginUser = (req, res) => {
         res.status(200).json({
           message: 'Login successful.',
           userId: verifiedUser.id,
-          userName: verifiedUser.name, // Send the name for the greeting
+          userName: verifiedUser.name, 
+          role: verifiedUser.role,
+          // Send the name for the greeting
         });
       });
     });
