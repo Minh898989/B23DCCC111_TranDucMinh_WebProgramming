@@ -1,6 +1,7 @@
 const express = require('express');
 const userRoutes = require('./src/routes/userRoutes');
 const foodRoutes = require('./src/routes/foodRoutes');
+const drinkRoutes = require('./src/routes/drinkRoutes');
 const { initializeManagerAccount } = require('./src/controllers/userController');
 
 const cors = require('cors');
@@ -16,6 +17,8 @@ app.use(express.json());
 // Define API routes
 app.use('/api/users', userRoutes);
 app.use('/api', foodRoutes);
+app.use('/api', drinkRoutes);
+
 initializeManagerAccount();
 const PORT = 5000;
 app.listen(PORT, () => {

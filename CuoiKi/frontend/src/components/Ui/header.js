@@ -131,6 +131,10 @@ const handleOTPSubmit = async () => {
   return (
     <>
       <header className="header">
+      <div className="top-left-image-container">
+  
+  </div>
+      
         <a href="/" className="logo">
           <img
             src="https://jollibee.com.vn/static/version1732806380/frontend/Jollibee/default/vi_VN/images/logo.png"
@@ -162,7 +166,7 @@ const handleOTPSubmit = async () => {
             <div className="user-info">
             <span className="username">Xin chào, {username}</span>
             {loginSuccess && (
-  <FaSmile className="smiley-icon animated-smile" style={{ color: '#ffcc00' }} />
+                <FaSmile className="smiley-icon animated-smile" style={{ color: '#ffcc00' }} />
 )}
 
           </div>
@@ -171,6 +175,7 @@ const handleOTPSubmit = async () => {
           <FaShoppingCart className="cart-icon" />
           
         </div>
+       
         
       </header>
       

@@ -1,10 +1,10 @@
 .homepage {
-  max-width: 1100px; 
+  max-width: 1000px; 
+ 
   margin: 0 auto;
   padding: 0 20px; 
   font-family: Arial, sans-serif;
   background-color: white;
- 
   background-size: cover;
  
 }
@@ -12,11 +12,23 @@
   position: absolute;
  
   right: 10px; /* Khoảng cách từ bên phải */
-  bottom: 150px;
+  bottom: 540px;
  
 }
 
 .right-side-image img {
+  width: 220px; /* Đặt kích thước ảnh theo mong muốn */
+  height: 270px; /* Giữ tỷ lệ khung hình */
+}
+.righttt-side-image {
+  position: absolute;
+ 
+  right: 10px; /* Khoảng cách từ bên phải */
+  bottom: 150px;
+ 
+}
+
+.righttt-side-image img {
   width: 280px; /* Đặt kích thước ảnh theo mong muốn */
   height: 300px; /* Giữ tỷ lệ khung hình */
 }
@@ -24,13 +36,41 @@
   position: absolute;
 
   left: 10px; /* Khoảng cách từ bên phải */
-  bottom: 400px;
+  bottom: 100px;
  
 }
 .left-side-image img {
   width: 280px; /* Đặt kích thước ảnh theo mong muốn */
   height: 300px; /* Giữ tỷ lệ khung hình */
 }
+.rightcc-side-image {
+  position: absolute;
+ 
+  left: 295px; /* Khoảng cách từ bên phải */
+  top: 10px;
+ 
+}
+
+.rightcc-side-image img {
+  width: 70px; /* Đặt kích thước ảnh theo mong muốn */
+  height: 90px; /* Giữ tỷ lệ khung hình */
+}
+.rightcctt-side-image {
+  position: absolute;
+  left: 0px;
+   /* Khoảng cách từ bên phải */
+  top: 0px;
+ 
+}
+
+.rightcctt-side-image img {
+  width: 180px; /* Đặt kích thước ảnh theo mong muốn */
+  height: 100px; /* Giữ tỷ lệ khung hình */
+}
+
+
+
+
 
 
 
@@ -40,7 +80,7 @@
     justify-content: space-between; /* Căn giữa các nút */
     align-items: center;
     background-color:#F4D2D6;
-    padding: 20px;
+    padding: 7px;
     border-bottom-left-radius: 35px; /* Bo góc dưới bên trái */
     border-bottom-right-radius: 35px;
     border-left: 1px solid #ccc; /* Viền bên trái */
@@ -176,7 +216,7 @@
     height: 110px; /* Để chiều rộng tự động vừa với nội dung */
     padding: 5px 10px; /* Thêm padding để tạo khoảng cách hợp lý */
     background-color:#F4D2D6;
-    color: #fff;
+    color: #0b0101;
     border: none; /* Xóa viền */
     border-radius: 25px; /* Bo tròn các góc */
     font-size: 16px;

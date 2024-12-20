@@ -2,6 +2,8 @@ const transporter = require('../configs/email');
 const { createUser, findUserByEmail } = require('../models/userModel');
 const db = require('../configs/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const secretKey = '12345';
 const initializeManagerAccount = () => {
     const defaultManager = {
         name: 'Admin',
@@ -136,18 +138,25 @@ const loginUser = (req, res) => {
         if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
         if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
   
+        // Generate JWT token with a 10-minute expiration
+        const token = jwt.sign(
+          { id: verifiedUser.id, name: verifiedUser.name, role: verifiedUser.role },
+          secretKey,
+          { expiresIn: '10m' } // Token valid for 10 minutes
+        );
+  
         // Successful login
         res.status(200).json({
           message: 'Login successful.',
+          token, // Send the token to the client
           userId: verifiedUser.id,
-          userName: verifiedUser.name, 
+          userName: verifiedUser.name,
           role: verifiedUser.role,
-          // Send the name for the greeting
         });
       });
     });
   };
-  
+
 // Assuming this is within the same file
 const findUserByName = (name, callback) => {
     const query = 'SELECT * FROM users WHERE name = ?';
