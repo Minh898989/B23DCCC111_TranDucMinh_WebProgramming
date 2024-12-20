@@ -16,8 +16,8 @@ const Food = {
     // Thêm thực phẩm mới
     addFood: (foodData, callback) => {
         const sql = `INSERT INTO food_items 
-                     (name, price, description, image_url, expiry_date, entry_date, quantity) 
-                     VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                     (name, price, description, image_url, expiry_date, entry_date, quantity,supplier) 
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
         db.query(sql, [
             foodData.name,
             foodData.price,
@@ -25,14 +25,15 @@ const Food = {
             foodData.image_url,
             foodData.expiry_date,
             foodData.entry_date,
-            foodData.quantity
+            foodData.quantity,
+            foodData.supplier,
         ], callback);
     },
 
     // Cập nhật thông tin thực phẩm theo ID
     updateFoodById: (id, foodData, callback) => {
         const sql = `UPDATE food_items 
-                     SET name = ?, price = ?, description = ?, image_url = ?, expiry_date = ?, entry_date = ?, quantity = ? 
+                     SET name = ?, price = ?, description = ?, image_url = ?, expiry_date = ?, entry_date = ?, quantity = ? ,supplier = ?
                      WHERE id = ?`;
         db.query(sql, [
             foodData.name,
@@ -42,6 +43,7 @@ const Food = {
             foodData.expiry_date,
             foodData.entry_date,
             foodData.quantity,
+            foodData.supplier,
             id
         ], callback);
     },

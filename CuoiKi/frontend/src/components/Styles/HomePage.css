@@ -14,12 +14,17 @@
     display: flex;
     justify-content: space-between; /* Căn giữa các nút */
     align-items: center;
-    background-color: #f8f9fa;
+    background-color:#F4D2D6;
     padding: 20px;
-    border-bottom-left-radius: 25px; /* Bo góc dưới bên trái */
-    border-bottom-right-radius: 25px;
-    border: 2px solid #ccc; /* Thêm viền cho khung */
+    border-bottom-left-radius: 35px; /* Bo góc dưới bên trái */
+    border-bottom-right-radius: 35px;
+    border-left: 1px solid #ccc; /* Viền bên trái */
+  border-right: 1px solid #ccc; /* Viền bên phải */
+  border-bottom: 1px solid #ccc; /* Viền bên dưới */
+    box-shadow: 0 0 15px rgba(206, 131, 232, 0.8);
+  
   }
+  
   /* Header styles */
   .header-link {
     color: #fff;
@@ -111,8 +116,8 @@
   
   
   .dish-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    transform: scale(1.0505);
+    box-shadow: 0 8px 16px rgba(208, 18, 18, 0.2);
   }
   
   .dish-image {
@@ -212,3 +217,94 @@
     transition: background-color 0.3s, transform 0.2s;
     margin-bottom: 10px;
   }
+  .cart-count {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: red;
+    color: white;
+    font-size: 14px;
+    border-radius: 50%;
+    padding: 2px 6px;
+  }
+  .cart-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #ff6347;
+    border-radius: 50%;
+    padding: 15px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  .cart-icon img {
+    width: 40px;
+    height: 40px;
+  }
+  .cart-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  
+  .cart-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .cart-modal-content ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .cart-modal-content li {
+    margin-bottom: 10px;
+  }
+  
+  .cart-modal-content button {
+    background-color: #f39c12;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .cart-modal-content button:hover {
+    background-color: #e67e22;
+  }
+  /* CSS for flying animation */
+.fly-item {
+  position: fixed;
+  z-index: 1000;
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+  pointer-events: none;
+  animation: fly-to-cart 1s ease-in-out forwards;
+}
+
+/* Define keyframes for the animation */
+@keyframes fly-to-cart {
+  0% {
+    transform: translate(0, 0);
+  }
+  100% {
+    transform: translate(var(--endX), var(--endY));
+  }
+}
+
+  
