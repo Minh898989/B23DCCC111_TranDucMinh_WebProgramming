@@ -84,7 +84,7 @@ const Homepage = () => {
             onClick={() => setCurrentCategory('chicken')}
           >
             <img
-              src="https://jollibee.com.vn/media/catalog/product/cache/11f3e6435b23ab624dc55c2d3fe9479d/g/_/g_gi_n_vui_v_-_8_1.png"
+              src="https://jollibee.com.vn//media/catalog/category/web-05_1.png"
               alt="Chicken icon"
               className="button-icon"
             />
