@@ -15,14 +15,13 @@ const Homepage = () => {
   const [currentCategory, setCurrentCategory] = useState('featured');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [flyItem, setFlyItem] = useState(null);
+  const [cartShake, setCartShake] = useState(false); // State for cart shake effect
 
   useEffect(() => {
     if (currentCategory === 'chicken') {
       fetch('http://localhost:5000/api/foods')
         .then((response) => response.json())
         .then((data) => {
-          console.log(data);  // Kiểm tra dữ liệu trả về từ API
           setChickenDishes(data);
         })
         .catch((error) => console.error('Error fetching chicken dishes:', error));
@@ -37,7 +36,7 @@ const Homepage = () => {
     return price.toLocaleString('vi-VN');
   };
 
-  const addToCart = (dish, event) => {
+  const addToCart = (dish) => {
     const existingItem = cart.find((item) => item.id === dish.id);
     if (existingItem) {
       setCart(cart.map((item) =>
@@ -47,23 +46,9 @@ const Homepage = () => {
       setCart([...cart, { ...dish, quantity: 1 }]);
     }
 
-    // Add flying animation
-    const flyImg = event.target.closest('.dish-card')?.querySelector('.dish-image');
-    if (flyImg) {
-      const rect = flyImg.getBoundingClientRect();
-      const cartIcon = document.querySelector('.cart-icon');
-
-      setFlyItem({
-        id: dish.id,
-        image_url: dish.image_url,
-        startX: rect.left,
-        startY: rect.top,
-        endX: cartIcon.offsetLeft + cartIcon.offsetWidth / 2,
-        endY: cartIcon.offsetTop + cartIcon.offsetHeight / 2,
-      });
-
-      setTimeout(() => setFlyItem(null), 1000); // Remove the flying item after animation
-    }
+    // Trigger the cart shake effect after adding an item
+    setCartShake(true);
+    setTimeout(() => setCartShake(false), 1500); // Reset shake effect after 1.5 seconds
   };
 
   const calculateTotal = () => {
@@ -71,9 +56,16 @@ const Homepage = () => {
   };
 
   return (
-    <div className="body">
+    
       <div className="homepage">
         {/* Category Buttons */}
+        <div className="right-side-image">
+           <img src="https://png.pngtree.com/png-vector/20240728/ourmid/pngtree-fried-chicken-illustration-png-image_13271391.png" alt="Fried chicken illustration" />
+        </div>
+        <div className="left-side-image">
+           <img src="https://png.pngtree.com/png-clipart/20240619/original/pngtree-fried-chicken-cartoon-character-logo-png-image_15367262.png" alt="Fried chicken illustration" />
+        </div>
+
         <div className="category-buttons">
           <button
             className={`add-to-cart-button ${currentCategory === 'featured' ? 'active' : ''}`}
@@ -101,41 +93,27 @@ const Homepage = () => {
         </div>
 
         {/* Cart Icon */}
-        <div className="cart-icon-container" onClick={() => setIsCartOpen(!isCartOpen)}>
+        <div className={`cart-icon-container ${cartShake ? 'shake' : ''}`} onClick={() => setIsCartOpen(!isCartOpen)}>
           <FaShoppingCart className="cart-icon" />
-          <span className="cart-count">{cart.reduce((total, item) => total + item.quantity, 0)}</span>
+          <span className="cart-count">
+            {cart.reduce((total, item) => total + item.quantity, 0)} {/* Tổng số sản phẩm trong giỏ */}
+          </span>
         </div>
 
         {/* Dishes */}
         <div className="dishes-container">
           {getCurrentDishes().map((dish) => (
             <div className="dish-card" key={dish.id}>
-              <img src={dish.image_url} alt={dish.image_url} className="dish-image" />
+              <img src={dish.image_url} alt={dish.name} className="dish-image" />
               <h3 className="dish-name">{dish.name}</h3>
               <p className="dish-price">{formatPrice(dish.price)} VNĐ</p>
 
-              <button className="add-to-cart-buttonss" onClick={(e) => addToCart(dish, e)}>
+              <button className="add-to-cart-buttonss" onClick={() => addToCart(dish)}>
                 Thêm vào giỏ
               </button>
             </div>
           ))}
         </div>
-
-        {/* Flying animation */}
-        {flyItem && (
-          <img
-            src={flyItem.image_url}
-            alt="Flying item"
-            className="fly-item"
-            style={{
-              top: flyItem.startY,
-              left: flyItem.startX,
-              animation: `fly-to-cart 1s ease-in-out forwards`,
-              '--endX': `${flyItem.endX}px`,
-              '--endY': `${flyItem.endY}px`,
-            }}
-          />
-        )}
 
         {/* Cart Modal */}
         {isCartOpen && (
@@ -155,7 +133,7 @@ const Homepage = () => {
           </div>
         )}
       </div>
-    </div>
+    
   );
 };
 

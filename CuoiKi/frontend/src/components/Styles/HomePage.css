@@ -1,20 +1,45 @@
-/* General styles */
-.body{
-    background-color: #ffffff;
-}
 .homepage {
-    max-width: 65%;
-    margin: 0 auto;
-    padding: 0 20px;
-    font-family: Arial, sans-serif;
-    background-color: white;
-  }
+  max-width: 1100px; 
+  margin: 0 auto;
+  padding: 0 20px; 
+  font-family: Arial, sans-serif;
+  background-color: white;
+ 
+  background-size: cover;
+ 
+}
+.right-side-image {
+  position: absolute;
+ 
+  right: 10px; /* Khoảng cách từ bên phải */
+  bottom: 150px;
+ 
+}
+
+.right-side-image img {
+  width: 280px; /* Đặt kích thước ảnh theo mong muốn */
+  height: 300px; /* Giữ tỷ lệ khung hình */
+}
+.left-side-image {
+  position: absolute;
+
+  left: 10px; /* Khoảng cách từ bên phải */
+  bottom: 400px;
+ 
+}
+.left-side-image img {
+  width: 280px; /* Đặt kích thước ảnh theo mong muốn */
+  height: 300px; /* Giữ tỷ lệ khung hình */
+}
+
+
+
   .category-buttons {
     
     display: flex;
     justify-content: space-between; /* Căn giữa các nút */
     align-items: center;
-    background-color:#F4D2D6;
+    background-color:#869deb;
     padding: 20px;
     border-bottom-left-radius: 35px; /* Bo góc dưới bên trái */
     border-bottom-right-radius: 35px;
@@ -150,7 +175,7 @@
     width: 100px;
     height: 110px; /* Để chiều rộng tự động vừa với nội dung */
     padding: 5px 10px; /* Thêm padding để tạo khoảng cách hợp lý */
-    background-color: #ffc107;
+    background-color: #eded36;
     color: #fff;
     border: none; /* Xóa viền */
     border-radius: 25px; /* Bo tròn các góc */
@@ -159,7 +184,12 @@
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
   }
-
+  .add-to-cart-button:hover {
+    background-color: #e0a800; /* Đổi màu nền khi hover */
+    transform: scale(1.05); /* Phóng to nút một chút khi hover */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); /* Hiệu ứng bóng đổ khi hover */
+  }
+  
   .add-to-cart-button .button-icon {
     width: 60px;
     height: 60px;
@@ -207,7 +237,7 @@
     width: 100px;
     height: 50px; /* Để chiều rộng tự động vừa với nội dung */
     padding: 5px 10px; /* Thêm padding để tạo khoảng cách hợp lý */
-    background-color: #ffc107;
+    background-color: #f00f0f;
     color: #fff;
     border: none; /* Xóa viền */
     border-radius: 25px; /* Bo tròn các góc */
@@ -216,20 +246,25 @@
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
     margin-bottom: 10px;
+    transition: transform 0.3s, box-shadow 0.3s;
   }
   .cart-count {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    background-color: red;
-    color: white;
-    font-size: 14px;
-    border-radius: 50%;
-    padding: 2px 6px;
+    position: fixed;
+    bottom: 62px;  /* Khoảng cách từ dưới lên */
+    right: 35px;   /* Khoảng cách từ bên phải vào */
+    font-size: 20px;  /* Kích thước chữ */
+    font-weight: bold;
+    color: #fcf7f6;  /* Màu chữ (hoặc có thể thay đổi) */
+  
+    cursor: pointer;  /* Khi di chuột qua sẽ có kiểu con trỏ như nút bấm */
   }
+  
+  
   .cart-icon {
     position: fixed;
     bottom: 20px;
+    width: 40px;
+    height: 40px;
     right: 20px;
     background-color: #ff6347;
     border-radius: 50%;
@@ -286,25 +321,39 @@
   .cart-modal-content button:hover {
     background-color: #e67e22;
   }
-  /* CSS for flying animation */
-.fly-item {
-  position: fixed;
-  z-index: 1000;
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  pointer-events: none;
-  animation: fly-to-cart 1s ease-in-out forwards;
-}
-
-/* Define keyframes for the animation */
-@keyframes fly-to-cart {
-  0% {
-    transform: translate(0, 0);
+  .fly-item {
+    position: fixed;
+    z-index: 1000;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    pointer-events: none;
+    animation: fly-to-cart 1s ease-in-out forwards;
   }
-  100% {
-    transform: translate(var(--endX), var(--endY));
+  
+  @keyframes fly-to-cart {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(var(--endX), var(--endY));
+    }
   }
-}
-
+  
+  .cart-icon-container.shake {
+    animation: shake 0.77s;
+   
+  }
+  
+  @keyframes shake {
+    0%, 100% {
+      transform: translateX(0);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+  }
   
