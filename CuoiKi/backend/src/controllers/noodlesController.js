@@ -107,7 +107,7 @@ const noodlesController = {
     // Xóa thực phẩm theo ID
     deleteNoodlesById: (req, res) => {
         const { id } = req.params;
-        Noodles.deleteFoodById(id, (err, result) => {
+        Noodles.deleteNoodlesById(id, (err, result) => {
             if (err) return res.status(500).json({ error: err.message });
             if (result.affectedRows === 0) return res.status(404).json({ message: 'Không tìm thấy thực phẩm' });
             res.json({ message: 'Thực phẩm đã được xóa thành công' });

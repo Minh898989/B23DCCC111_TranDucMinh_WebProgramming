@@ -5,7 +5,8 @@ import { FaShoppingCart } from 'react-icons/fa';
 const Homepage = () => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
-  const [noodlesDishes, setNoodlesDishes] = useState([]); // State cho noodles
+  const [noodlesDishes, setNoodlesDishes] = useState([]);
+  const [breadDishes, setBreadDishes] = useState([]);  // State cho noodles
   const [currentCategory, setCurrentCategory] = useState('featured');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -46,6 +47,16 @@ const Homepage = () => {
         .catch((error) => console.error('Error fetching noodles dishes:', error));
     }
   }, [currentCategory]);
+  useEffect(() => {
+    if (currentCategory === 'bread') {
+      fetch('http://localhost:5000/api/breads')
+        .then((response) => response.json())
+        .then((data) => {
+          setBreadDishes(data);
+        })
+        .catch((error) => console.error('Error fetching noodles dishes:', error));
+    }
+  }, [currentCategory]);
 
   // Get current dishes based on category
   const getCurrentDishes = () => {
@@ -55,6 +66,8 @@ const Homepage = () => {
       return chickenDishes;
     } else if (currentCategory === 'noodles') {
       return noodlesDishes; // Trả về món noodles
+    } else if (currentCategory === 'bread') {
+      return breadDishes; // Trả về món noodles
     }
     return [];
   };
@@ -136,6 +149,17 @@ const Homepage = () => {
             className="button-icon"
           />
           Mì
+        </button>
+        <button
+          className={`add-to-cart-button ${currentCategory === 'bread' ? 'active' : ''}`}
+          onClick={() => setCurrentCategory('bread')}
+        >
+          <img
+            src="https://jollibee.com.vn//media/catalog/category/cat_burger_1.png"
+            alt="Bread icon"
+            className="button-icon"
+          />
+          Bánh mì & các loại
         </button>
       </div>
 

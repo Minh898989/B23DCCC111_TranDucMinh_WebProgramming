@@ -2,9 +2,10 @@
   max-width: 1000px; 
  
   margin: 0 auto;
-  padding: 0 20px; 
+  padding: 0px 20px;
+  padding-bottom: 20px; 
   font-family: Arial, sans-serif;
-  background-color: white;
+  background-color: rgb(153, 14, 14);
   background-size: cover;
  
 }

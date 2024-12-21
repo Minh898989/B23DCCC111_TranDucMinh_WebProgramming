@@ -3,6 +3,7 @@ const userRoutes = require('./src/routes/userRoutes');
 const foodRoutes = require('./src/routes/foodRoutes');
 const drinkRoutes = require('./src/routes/drinkRoutes');
 const noodlesRoutes = require('./src/routes/noodlesRoutes');
+const breadRoutes = require('./src/routes/breadRoutes');
 const { initializeManagerAccount } = require('./src/controllers/userController');
 
 const cors = require('cors');
@@ -20,6 +21,7 @@ app.use('/api/users', userRoutes);
 app.use('/api', foodRoutes);
 app.use('/api', drinkRoutes);
 app.use('/api', noodlesRoutes);
+app.use('/api', breadRoutes);
 
 initializeManagerAccount();
 const PORT = 5000;
