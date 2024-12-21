@@ -7,34 +7,14 @@ const Homepage = ({ searchTerm }) => {
   const [chickenDishes, setChickenDishes] = useState([]);
   const [noodlesDishes, setNoodlesDishes] = useState([]);
   const [breadDishes, setBreadDishes] = useState([]);  
+  const [dessertDishes, setDessertDishes] = useState([]); 
   const [currentCategory, setCurrentCategory] = useState('featured');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartShake, setCartShake] = useState(false);
 
   // Background image state
-  const [backgroundImage, setBackgroundImage] = useState(
-    'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")'
-  );
 
-  useEffect(() => {
-    const images = [
-      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")',
-      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/j/o/jollibee-spagetti_banner-web_4.jpg")',
-      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")',
-    ];
-  
-    const interval = setInterval(() => {
-      setBackgroundImage((prevImage) => {
-        const currentIndex = images.indexOf(prevImage);
-        const nextIndex = (currentIndex + 1) % images.length;
-        return images[nextIndex];
-      });
-    }, 1000); // Change image every 1 second
-  
-    return () => clearInterval(interval); // Clean up interval on unmount
-  }, []); // Empty dependency array because images are now inside useEffect
-  
 
   // Fetch dishes based on category (same as your current useEffect logic)
   useEffect(() => {
@@ -72,6 +52,15 @@ const Homepage = ({ searchTerm }) => {
         .catch((error) => console.error('Error fetching bread dishes:', error));
     }
   }, [currentCategory]);
+  useEffect(() => {
+    if (currentCategory === 'dessert') {
+      fetch(' http://localhost:5000/api/dessert')
+        .then((response) => response.json())
+        .then((data) => setDessertDishes(data))
+        .catch((error) => console.error('Error fetching featured dishes:', error));
+    }
+  }, [currentCategory]);
+  
 
   const getCurrentDishes = () => {
     const categoryMap = {
@@ -79,6 +68,7 @@ const Homepage = ({ searchTerm }) => {
       chicken: chickenDishes,
       noodles: noodlesDishes,
       bread: breadDishes,
+      dessert: dessertDishes,
     };
 
     const dishes = categoryMap[currentCategory] || [];
@@ -127,7 +117,7 @@ const Homepage = ({ searchTerm }) => {
         <img src="https://png.pngtree.com/png-vector/20241023/ourmid/pngtree-chibi-cute-kawaii-snowman-with-a-hat-and-red-scarf-snowflake-png-image_14144298.png" alt="Fried chicken illustration" />
       </div>
 
-      <div className="category-buttons" style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
+      <div className="category-buttons" >
         <button
           className={`add-to-cart-button ${currentCategory === 'featured' ? 'active' : ''}`}
           onClick={() => setCurrentCategory('featured')}
@@ -174,6 +164,19 @@ const Homepage = ({ searchTerm }) => {
           />
           Bánh mì & các loại
         </button>
+        <button
+          className={`add-to-cart-button ${currentCategory === 'dessert' ? 'active' : ''}`}
+          onClick={() => setCurrentCategory('dessert')}
+        >
+          <img
+            src="https://jollibee.com.vn//media/catalog/category/trangmieng.png"
+            alt="dessert icon"
+            className="button-icon"
+          />
+          Tráng Miệng
+        </button>
+        
+        
       </div>
 
       <div className={`cart-icon-container ${cartShake ? 'shake' : ''}`} onClick={() => setIsCartOpen(!isCartOpen)}>

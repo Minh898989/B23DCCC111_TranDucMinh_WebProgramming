@@ -1,6 +1,6 @@
 .homepage {
   max-width: 1000px; 
- 
+  height: 1150px;
   margin: 0 auto;
   padding: 0px 20px;
   padding-bottom: 20px; 
@@ -88,9 +88,9 @@
    border-right: 1px solid #ccc; /* Viền bên phải */
   border-bottom: 1px solid #ccc; /* Viền bên dưới */
     box-shadow: 0 0 15px rgba(206, 131, 232, 0.8);
-    transition: background-image 1s ease-in-out;  
-    background-image: url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png"), url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png"), url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/j/o/jollibee-spagetti_banner-web_4.jpg");
-    
+    transition: background-image 2s ease-in-out;  
+  
+    background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
 

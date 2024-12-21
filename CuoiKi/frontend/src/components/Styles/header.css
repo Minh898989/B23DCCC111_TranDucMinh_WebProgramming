@@ -1,12 +1,12 @@
 /* Header Styles */
 .header {
-  background-color: #f70c10;
+  background-color: #c61f22;
   padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   color: #fff;
- 
+  border-top: 8px solid #f5a623;
   position: relative;
 }
 
