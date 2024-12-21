@@ -6,15 +6,18 @@ import 'leaflet/dist/leaflet.css';
 import '../Styles/header.css';
 import axios from 'axios';
 
-const Header = () => {
+const Header = ({ setSearchTerm }) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const [isOTPModalOpen, setIsOTPModalOpen] = useState(false); // For register modal
   const [selectedLocation, setSelectedLocation] = useState({
     lat: 21.0285, // Default latitude for Hanoi
     lng: 105.8542, // Default longitude for Hanoi
   });
+
+
   const [locationText, setLocationText] = useState('');
   const [username, setUsername] = useState('');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -117,6 +120,9 @@ const handleOTPSubmit = async () => {
   const updateLocation = () => {
     setIsMapOpen(true);
   };
+  const handleSearch = () => {
+    setSearchTerm(searchInput); // Cập nhật từ khóa tìm kiếm
+  };
 
   const LocationUpdater = () => {
     useMapEvents({
@@ -144,9 +150,22 @@ const handleOTPSubmit = async () => {
           
         </a>
         <div className="search-container">
-          <input type="text" className="search-bar" placeholder="Tìm món ăn..." />
-          <FaSearch className="search-icon" />
-        </div>
+  <div className="search-bar-wrapper">
+    <FaSearch className="search-icon" />
+    <input
+      type="text"
+      className="search-bar"
+      placeholder="Tìm món ăn..."
+      value={searchInput}
+      onChange={(e) => setSearchInput(e.target.value)}
+    />
+    <button className="search-button" onClick={handleSearch}>
+      <FaSearch />
+    </button>
+  </div>
+</div>
+
+
         <div className="header-actions">
           <div className="location-container">
             <MdLocationOn className="location-icon" onClick={updateLocation} title="Update Location" />

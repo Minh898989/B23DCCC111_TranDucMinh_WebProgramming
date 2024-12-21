@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../Styles/HomePage.css';
 import { FaShoppingCart } from 'react-icons/fa';
 
-const Homepage = () => {
+const Homepage = ({ searchTerm }) => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
   const [noodlesDishes, setNoodlesDishes] = useState([]);
@@ -60,17 +60,23 @@ const Homepage = () => {
 
   // Get current dishes based on category
   const getCurrentDishes = () => {
-    if (currentCategory === 'featured') {
-      return featuredDishes;
-    } else if (currentCategory === 'chicken') {
-      return chickenDishes;
-    } else if (currentCategory === 'noodles') {
-      return noodlesDishes; // Trả về món noodles
-    } else if (currentCategory === 'bread') {
-      return breadDishes; // Trả về món noodles
-    }
-    return [];
+    const categoryMap = {
+      featured: featuredDishes,
+      chicken: chickenDishes,
+      noodles: noodlesDishes,
+      bread: breadDishes,
+    };
+  
+    const dishes = categoryMap[currentCategory] || []; // Lấy danh sách theo category hoặc trả về mảng rỗng nếu không có
+  
+    // Lọc danh sách món ăn nếu có searchTerm
+    return searchTerm
+      ? dishes.filter((dish) =>
+          dish.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : dishes;
   };
+  
 
   // Format price to Vietnamese currency format
   const formatPrice = (price) => {
@@ -97,6 +103,7 @@ const Homepage = () => {
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
+  
 
   return (
     <div className="homepage">

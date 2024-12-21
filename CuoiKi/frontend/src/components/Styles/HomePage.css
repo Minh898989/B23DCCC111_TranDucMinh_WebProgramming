@@ -138,17 +138,19 @@
   /* Dishes container */
   .dishes-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
     margin-top: 20px;
+    
   }
-  
+ 
   /* Dish card styles */
- /* Dish card styles */
+ 
 .dish-card {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 10px;
+    border: 1px dashed #131313;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -156,23 +158,12 @@
     flex-direction: column; /* Đảm bảo các phần tử con xếp theo cột */
     align-items: center; /* Căn giữa tất cả các phần tử con theo chiều ngang */
     justify-content: space-between; /* Chia đều không gian giữa các phần tử */
-    height: 100%; /* Đảm bảo chiều cao của card bao quát toàn bộ nội dung */
+    
+    width: 100%; /* Đảm bảo chiều cao của card bao quát toàn bộ nội dung */
   }
   
   /* Add-to-cart button inside dish card */
-  .dish-card {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-    display: flex;
-    flex-direction: column; /* Đảm bảo các phần tử con xếp theo cột */
-    align-items: center; /* Căn giữa tất cả các phần tử con theo chiều ngang */
-    justify-content: space-between; /* Chia đều không gian giữa các phần tử */
-    height: 100%; /* Đảm bảo chiều cao của card bao quát toàn bộ nội dung */
-  }
+  
   
   .dish-card .add-to-cart-button .button-icon {
     width: 20px;
