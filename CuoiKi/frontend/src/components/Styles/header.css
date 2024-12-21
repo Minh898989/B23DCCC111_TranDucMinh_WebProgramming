@@ -1,7 +1,7 @@
 /* Header Styles */
 .header {
   background-color: #f70c10;
-  padding: 15px 20px;
+  padding: 5px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -25,24 +25,45 @@
 
 .logo {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column; /* Đặt logo và chữ theo chiều dọc */
+  align-items: center; /* Căn giữa các phần tử */
+  gap: 5px; /* Khoảng cách giữa logo và chữ */
   padding-left: 30px;
 }
 
 .logo-image {
-  top:70px;
-  height: 80px; 
-  width: auto;
-
+  height: 130px;
+  width: 130px;
+  animation: logoEffect 3s ease-in-out infinite; /* Áp dụng hiệu ứng cho hình ảnh */
 }
 
-.logo-text {
-  font-size: 20px;
-  font-weight: bold;
-  color: white;
-  text-decoration: none;
+@keyframes logoEffect {
+  0% {
+    transform: translateY(0) scale(1) rotate(0deg); /* Ban đầu không di chuyển, không xoay */
+  }
+  50% {
+    transform: translateY(-10px) scale(1.1) rotate(10deg); /* Di chuyển lên, phóng to và xoay một chút */
+  }
+  100% {
+    transform: translateY(0) scale(1) rotate(0deg); /* Trở về trạng thái ban đầu */
+  }
 }
+
+@keyframes textEffect {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-15px) scale(1.1); /* Phóng to và di chuyển lên */
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
 
 /* Search Bar */
 .search-container {
@@ -84,7 +105,8 @@
   background-color: #fff;
   color: #f70c10;
   border: 1px solid #f70c10;
-  padding: 8px 15px;
+  padding: 10px 15px;
+  width: 135px;
   border-radius: 20px;
   font-size: 14px;
   cursor: pointer;

@@ -5,10 +5,11 @@ import { FaShoppingCart } from 'react-icons/fa';
 const Homepage = () => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
+  const [noodlesDishes, setNoodlesDishes] = useState([]); // State cho noodles
   const [currentCategory, setCurrentCategory] = useState('featured');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartShake, setCartShake] = useState(false); // State for cart shake effect
+  const [cartShake, setCartShake] = useState(false); // State cho hiệu ứng lắc giỏ hàng
 
   // Fetch featured dishes from the API
   useEffect(() => {
@@ -22,6 +23,7 @@ const Homepage = () => {
     }
   }, [currentCategory]);
 
+  // Fetch chicken dishes from the API
   useEffect(() => {
     if (currentCategory === 'chicken') {
       fetch('http://localhost:5000/api/foods')
@@ -33,14 +35,36 @@ const Homepage = () => {
     }
   }, [currentCategory]);
 
+  // Fetch noodles dishes from the API
+  useEffect(() => {
+    if (currentCategory === 'noodles') {
+      fetch('http://localhost:5000/api/noodless')
+        .then((response) => response.json())
+        .then((data) => {
+          setNoodlesDishes(data);
+        })
+        .catch((error) => console.error('Error fetching noodles dishes:', error));
+    }
+  }, [currentCategory]);
+
+  // Get current dishes based on category
   const getCurrentDishes = () => {
-    return currentCategory === 'featured' ? featuredDishes : chickenDishes;
+    if (currentCategory === 'featured') {
+      return featuredDishes;
+    } else if (currentCategory === 'chicken') {
+      return chickenDishes;
+    } else if (currentCategory === 'noodles') {
+      return noodlesDishes; // Trả về món noodles
+    }
+    return [];
   };
 
+  // Format price to Vietnamese currency format
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN');
   };
 
+  // Add item to the cart
   const addToCart = (dish) => {
     const existingItem = cart.find((item) => item.id === dish.id);
     if (existingItem) {
@@ -56,6 +80,7 @@ const Homepage = () => {
     setTimeout(() => setCartShake(false), 1500); // Reset shake effect after 1.5 seconds
   };
 
+  // Calculate total price of items in the cart
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
@@ -75,8 +100,6 @@ const Homepage = () => {
       <div className="rightcc-side-image">
         <img src="https://png.pngtree.com/png-vector/20241023/ourmid/pngtree-chibi-cute-kawaii-snowman-with-a-hat-and-red-scarf-snowflake-png-image_14144298.png" alt="Fried chicken illustration" />
       </div>
-      
-      
 
       <div className="category-buttons">
         <button
@@ -102,6 +125,18 @@ const Homepage = () => {
           />
           Gà Ngon
         </button>
+
+        <button
+          className={`add-to-cart-button ${currentCategory === 'noodles' ? 'active' : ''}`}
+          onClick={() => setCurrentCategory('noodles')}
+        >
+          <img
+            src="https://jollibee.com.vn//media/catalog/category/web-06.png"
+            alt="Noodles icon"
+            className="button-icon"
+          />
+          Mì
+        </button>
       </div>
 
       {/* Cart Icon */}
@@ -116,7 +151,7 @@ const Homepage = () => {
       <div className="dishes-container">
         {getCurrentDishes().map((dish) => (
           <div className="dish-card" key={dish.id}>
-            <img src={dish.image_url} alt={dish.name} className="dish-image" />
+            <img src={dish.image_url} alt={dish.image_url} className="dish-image" />
             <h3 className="dish-name">{dish.name}</h3>
             <p className="dish-price">{formatPrice(dish.price)} VNĐ</p>
 

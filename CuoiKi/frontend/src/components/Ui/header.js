@@ -137,10 +137,11 @@ const handleOTPSubmit = async () => {
       
         <a href="/" className="logo">
           <img
-            src="https://jollibee.com.vn/static/version1732806380/frontend/Jollibee/default/vi_VN/images/logo.png"
+            src="https://png.pngtree.com/png-vector/20241025/ourmid/pngtree-fried-chicken-logo-vector-png-image_14169441.png"
             alt="FoodStore Logo"
             className="logo-image"
           />
+          
         </a>
         <div className="search-container">
           <input type="text" className="search-bar" placeholder="Tìm món ăn..." />
