@@ -85,9 +85,16 @@
     border-bottom-left-radius: 35px; /* Bo góc dưới bên trái */
     border-bottom-right-radius: 35px;
     border-left: 1px solid #ccc; /* Viền bên trái */
-  border-right: 1px solid #ccc; /* Viền bên phải */
+   border-right: 1px solid #ccc; /* Viền bên phải */
   border-bottom: 1px solid #ccc; /* Viền bên dưới */
     box-shadow: 0 0 15px rgba(206, 131, 232, 0.8);
+    transition: background-image 1s ease-in-out;  
+    background-image: url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png"), url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png"), url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/j/o/jollibee-spagetti_banner-web_4.jpg");
+    
+  background-position: center;
+  background-repeat: no-repeat;
+
+
   
   }
   

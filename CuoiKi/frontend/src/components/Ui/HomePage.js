@@ -6,59 +6,73 @@ const Homepage = ({ searchTerm }) => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
   const [noodlesDishes, setNoodlesDishes] = useState([]);
-  const [breadDishes, setBreadDishes] = useState([]);  // State cho noodles
+  const [breadDishes, setBreadDishes] = useState([]);  
   const [currentCategory, setCurrentCategory] = useState('featured');
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartShake, setCartShake] = useState(false); // State cho hiệu ứng lắc giỏ hàng
+  const [cartShake, setCartShake] = useState(false);
 
-  // Fetch featured dishes from the API
+  // Background image state
+  const [backgroundImage, setBackgroundImage] = useState(
+    'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")'
+  );
+
+  useEffect(() => {
+    const images = [
+      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")',
+      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/j/o/jollibee-spagetti_banner-web_4.jpg")',
+      'url("https://jollibee.com.vn/media/mageplaza/bannerslider/banner/image/b/a/banner_web.png")',
+    ];
+  
+    const interval = setInterval(() => {
+      setBackgroundImage((prevImage) => {
+        const currentIndex = images.indexOf(prevImage);
+        const nextIndex = (currentIndex + 1) % images.length;
+        return images[nextIndex];
+      });
+    }, 1000); // Change image every 1 second
+  
+    return () => clearInterval(interval); // Clean up interval on unmount
+  }, []); // Empty dependency array because images are now inside useEffect
+  
+
+  // Fetch dishes based on category (same as your current useEffect logic)
   useEffect(() => {
     if (currentCategory === 'featured') {
       fetch('http://localhost:5000/api/drinks')
         .then((response) => response.json())
-        .then((data) => {
-          setFeaturedDishes(data);
-        })
+        .then((data) => setFeaturedDishes(data))
         .catch((error) => console.error('Error fetching featured dishes:', error));
     }
   }, [currentCategory]);
 
-  // Fetch chicken dishes from the API
   useEffect(() => {
     if (currentCategory === 'chicken') {
       fetch('http://localhost:5000/api/foods')
         .then((response) => response.json())
-        .then((data) => {
-          setChickenDishes(data);
-        })
+        .then((data) => setChickenDishes(data))
         .catch((error) => console.error('Error fetching chicken dishes:', error));
     }
   }, [currentCategory]);
 
-  // Fetch noodles dishes from the API
   useEffect(() => {
     if (currentCategory === 'noodles') {
       fetch('http://localhost:5000/api/noodless')
         .then((response) => response.json())
-        .then((data) => {
-          setNoodlesDishes(data);
-        })
-        .catch((error) => console.error('Error fetching noodles dishes:', error));
-    }
-  }, [currentCategory]);
-  useEffect(() => {
-    if (currentCategory === 'bread') {
-      fetch('http://localhost:5000/api/breads')
-        .then((response) => response.json())
-        .then((data) => {
-          setBreadDishes(data);
-        })
+        .then((data) => setNoodlesDishes(data))
         .catch((error) => console.error('Error fetching noodles dishes:', error));
     }
   }, [currentCategory]);
 
-  // Get current dishes based on category
+  useEffect(() => {
+    if (currentCategory === 'bread') {
+      fetch('http://localhost:5000/api/breads')
+        .then((response) => response.json())
+        .then((data) => setBreadDishes(data))
+        .catch((error) => console.error('Error fetching bread dishes:', error));
+    }
+  }, [currentCategory]);
+
   const getCurrentDishes = () => {
     const categoryMap = {
       featured: featuredDishes,
@@ -66,24 +80,19 @@ const Homepage = ({ searchTerm }) => {
       noodles: noodlesDishes,
       bread: breadDishes,
     };
-  
-    const dishes = categoryMap[currentCategory] || []; // Lấy danh sách theo category hoặc trả về mảng rỗng nếu không có
-  
-    // Lọc danh sách món ăn nếu có searchTerm
+
+    const dishes = categoryMap[currentCategory] || [];
     return searchTerm
       ? dishes.filter((dish) =>
           dish.name.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : dishes;
   };
-  
 
-  // Format price to Vietnamese currency format
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN');
   };
 
-  // Add item to the cart
   const addToCart = (dish) => {
     const existingItem = cart.find((item) => item.id === dish.id);
     if (existingItem) {
@@ -94,16 +103,13 @@ const Homepage = ({ searchTerm }) => {
       setCart([...cart, { ...dish, quantity: 1 }]);
     }
 
-    // Trigger the cart shake effect after adding an item
     setCartShake(true);
-    setTimeout(() => setCartShake(false), 1500); // Reset shake effect after 1.5 seconds
+    setTimeout(() => setCartShake(false), 1500);
   };
 
-  // Calculate total price of items in the cart
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
-  
 
   return (
     <div className="homepage">
@@ -121,7 +127,7 @@ const Homepage = ({ searchTerm }) => {
         <img src="https://png.pngtree.com/png-vector/20241023/ourmid/pngtree-chibi-cute-kawaii-snowman-with-a-hat-and-red-scarf-snowflake-png-image_14144298.png" alt="Fried chicken illustration" />
       </div>
 
-      <div className="category-buttons">
+      <div className="category-buttons" style={{ backgroundImage: backgroundImage, backgroundSize: 'cover', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }}>
         <button
           className={`add-to-cart-button ${currentCategory === 'featured' ? 'active' : ''}`}
           onClick={() => setCurrentCategory('featured')}
@@ -170,15 +176,13 @@ const Homepage = ({ searchTerm }) => {
         </button>
       </div>
 
-      {/* Cart Icon */}
       <div className={`cart-icon-container ${cartShake ? 'shake' : ''}`} onClick={() => setIsCartOpen(!isCartOpen)}>
         <FaShoppingCart className="cart-icon" />
         <span className="cart-count">
-          {cart.reduce((total, item) => total + item.quantity, 0)} {/* Tổng số sản phẩm trong giỏ */}
+          {cart.reduce((total, item) => total + item.quantity, 0)}
         </span>
       </div>
 
-      {/* Dishes */}
       <div className="dishes-container">
         {getCurrentDishes().map((dish) => (
           <div className="dish-card" key={dish.id}>
@@ -193,7 +197,6 @@ const Homepage = ({ searchTerm }) => {
         ))}
       </div>
 
-      {/* Cart Modal */}
       {isCartOpen && (
         <div className="cart-modal">
           <div className="cart-modal-content">
