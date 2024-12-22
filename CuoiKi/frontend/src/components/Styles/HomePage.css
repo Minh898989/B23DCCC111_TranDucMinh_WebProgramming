@@ -1,14 +1,25 @@
+.home {
+ 
+  
+  background-image: url('https://media.istockphoto.com/id/1443049022/vi/vec-to/g%C3%A0-r%C3%A1n-gi%C3%B2n-hoa-v%C4%83n-li%E1%BB%81n-m%E1%BA%A1ch-n%E1%BB%81n-m%C3%B4-h%C3%ACnh-th%E1%BB%A9c-%C4%83n-nhanh.jpg?s=612x612&w=0&k=20&c=JJxpIIFYXl3wfKqvjftCIgmLHW4BWoMb2a1KTejR-vg=');
+}
 .homepage {
-  max-width: 1000px; 
-  height: 1150px;
+  max-width: 1000px;
+
   margin: 0 auto;
   padding: 0px 20px;
-  padding-bottom: 20px; 
+  padding-bottom: 20px;
   font-family: Arial, sans-serif;
   background-color: rgb(153, 14, 14);
   background-size: cover;
- 
+  border-radius: 10px; /* Optional: Adds rounded corners */
+  box-shadow: 0 0 25px 15px rgba(248, 203, 203, 0.8); /* Red glow effect */
 }
+
+
+
+
+
 .right-side-image {
   position: absolute;
  
@@ -85,8 +96,8 @@
     border-bottom-left-radius: 35px; /* Bo góc dưới bên trái */
     border-bottom-right-radius: 35px;
     border-left: 1px solid #ccc; /* Viền bên trái */
-   border-right: 1px solid #ccc; /* Viền bên phải */
-  border-bottom: 1px solid #ccc; /* Viền bên dưới */
+    border-right: 1px solid #ccc; /* Viền bên phải */
+    border-bottom: 1px solid #ccc; /* Viền bên dưới */
     box-shadow: 0 0 15px rgba(206, 131, 232, 0.8);
     transition: background-image 2s ease-in-out;  
   

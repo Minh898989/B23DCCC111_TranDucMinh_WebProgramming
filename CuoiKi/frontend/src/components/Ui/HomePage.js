@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../Styles/HomePage.css';
 import { FaShoppingCart } from 'react-icons/fa';
 
-const Homepage = ({ searchTerm }) => {
+
+
+const Homepage = ({ searchTerm,isLoggedIn }) => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
   const [noodlesDishes, setNoodlesDishes] = useState([]);
@@ -12,6 +14,11 @@ const Homepage = ({ searchTerm }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartShake, setCartShake] = useState(false);
+  // Trạng thái đăng nhập
+  // Hiển thị thông báo yêu cầu đăng nhập
+
+  
+
 
   // Background image state
 
@@ -100,23 +107,24 @@ const Homepage = ({ searchTerm }) => {
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
   };
+  const handleCheckout = () => {
+    if ( !isLoggedIn ) {
+      alert('Vui lòng đăng nhập để thanh toán');
+    } else {
+      alert('Thanh toán thành công!');
+    }
+  };
+
+
 
   return (
+    <div className='home'>
+       
     <div className="homepage">
       {/* Category Buttons */}
-      <div className="right-side-image">
-        <img src="https://png.pngtree.com/png-vector/20240728/ourmid/pngtree-fried-chicken-illustration-png-image_13271391.png" alt="Fried chicken illustration" />
-      </div>
-      <div className="left-side-image">
-        <img src="https://png.pngtree.com/png-clipart/20240619/original/pngtree-fried-chicken-cartoon-character-logo-png-image_15367262.png" alt="Fried chicken illustration" />
-      </div>
-      <div className="righttt-side-image">
-        <img src="https://images.careerviet.vn/content/images/ve-ong-gia-noel-CareerBuilder-1.jpg" alt="Fried chicken illustration" />
-      </div>
-      <div className="rightcc-side-image">
-        <img src="https://png.pngtree.com/png-vector/20241023/ourmid/pngtree-chibi-cute-kawaii-snowman-with-a-hat-and-red-scarf-snowflake-png-image_14144298.png" alt="Fried chicken illustration" />
-      </div>
-
+      
+      
+      
       <div className="category-buttons" >
         <button
           className={`add-to-cart-button ${currentCategory === 'featured' ? 'active' : ''}`}
@@ -212,10 +220,17 @@ const Homepage = ({ searchTerm }) => {
               ))}
             </ul>
             <p>Tổng tiền: {formatPrice(calculateTotal())} VNĐ</p>
+            <button onClick={handleCheckout} className="checkout-button">
+              Thanh Toán
+            </button>
+          
+           
+            
             <button onClick={() => setIsCartOpen(false)}>Đóng</button>
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };

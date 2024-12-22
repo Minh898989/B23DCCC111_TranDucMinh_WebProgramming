@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import '../Styles/header.css';
 import axios from 'axios';
 
-const Header = ({ setSearchTerm }) => {
+const Header = ({ setSearchTerm,  onLoginSuccess  }) => {
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
@@ -41,6 +41,7 @@ const Header = ({ setSearchTerm }) => {
       if (response.status === 200) {
         setUsername(response.data.userName);
         setLoginSuccess(true);
+        onLoginSuccess(true); 
         setIsLoginModalOpen(false);
       } else {
         alert('Đăng nhập thất bại.');
@@ -166,7 +167,7 @@ const handleOTPSubmit = async () => {
 </div>
 
 
-        <div className="header-actions">
+<div className="header-actions">
           <div className="location-container">
             <MdLocationOn className="location-icon" onClick={updateLocation} title="Update Location" />
             <span className="location-text">{locationText}</span>
@@ -195,6 +196,8 @@ const handleOTPSubmit = async () => {
           <FaShoppingCart className="cart-icon" />
           
         </div>
+       
+
        
         
       </header>
