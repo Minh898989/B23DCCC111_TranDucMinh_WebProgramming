@@ -312,6 +312,11 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
       <div className="order-footer">
       <button
           onClick={async () => {
+            if (!receiverName || !phoneNumber || !locationText) {
+              alert('Vui lòng điền đầy đủ thông tin trước khi đặt hàng.');
+              return;
+            }
+        
             const orderData = {
               receiverName,
               phoneNumber,
@@ -335,7 +340,10 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
                // const data = await response.json();
                 alert('Đặt hàng thành công!');
                 setCart([]); // Clear the cart
-                setIsOrderModalOpen(false); // Close the modal
+                setIsOrderModalOpen(false);
+                setReceiverName(''); // Reset receiver name
+                setPhoneNumber(''); // Reset phone number
+                setLocationText(''); // 
               } else {
                 throw new Error('Lỗi khi đặt hàng');
               }
