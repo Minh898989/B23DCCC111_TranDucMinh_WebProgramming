@@ -1,24 +1,20 @@
 import React, { useState } from 'react';
 import { FaShoppingCart, FaSearch,FaUserPlus ,FaUserAlt,FaSmile } from 'react-icons/fa';
-import { MdLocationOn } from 'react-icons/md';
-import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from 'react-leaflet';
+
 import 'leaflet/dist/leaflet.css';
 import '../Styles/header.css';
 import axios from 'axios';
 
-const Header = ({ setSearchTerm,  onLoginSuccess  }) => {
-  const [isMapOpen, setIsMapOpen] = useState(false);
+const Header = ({ setSearchTerm,  onLoginSuccess, }) => {
+ 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isRegisterModalOpen, setIsRegisterModalOpen] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [isOTPModalOpen, setIsOTPModalOpen] = useState(false); // For register modal
-  const [selectedLocation, setSelectedLocation] = useState({
-    lat: 21.0285, // Default latitude for Hanoi
-    lng: 105.8542, // Default longitude for Hanoi
-  });
 
 
-  const [locationText, setLocationText] = useState('');
+
+
   const [username, setUsername] = useState('');
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' }); // For registration
@@ -43,6 +39,7 @@ const Header = ({ setSearchTerm,  onLoginSuccess  }) => {
         setLoginSuccess(true);
         onLoginSuccess(true); 
         setIsLoginModalOpen(false);
+        
       } else {
         alert('Đăng nhập thất bại.');
       }
@@ -99,41 +96,18 @@ const handleOTPSubmit = async () => {
   }
 };
 
-  const getAddressFromCoordinates = async (lat, lng) => {
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-    );
-    const data = await response.json();
-    const fullAddress = data.display_name;
+  
+  
 
-    const addressParts = fullAddress.split(',').map(part => part.trim());
-    const addressWithoutLastParts = addressParts.slice(0, addressParts.length - 2).join(', ');
-
-    return addressWithoutLastParts;
-  };
-
-  const handleConfirmLocation = async () => {
-    const address = await getAddressFromCoordinates(selectedLocation.lat, selectedLocation.lng);
-    setLocationText(`Vị trí: ${address}`);
-    setIsMapOpen(false);
-  };
-
-  const updateLocation = () => {
-    setIsMapOpen(true);
-  };
+  
   const handleSearch = () => {
     setSearchTerm(searchInput); // Cập nhật từ khóa tìm kiếm
   };
 
-  const LocationUpdater = () => {
-    useMapEvents({
-      click(event) {
-        const { lat, lng } = event.latlng;
-        setSelectedLocation({ lat, lng });
-      },
-    });
-    return null;
-  };
+  
+ 
+
+
 
   return (
     <>
@@ -168,10 +142,7 @@ const handleOTPSubmit = async () => {
 
 
 <div className="header-actions">
-          <div className="location-container">
-            <MdLocationOn className="location-icon" onClick={updateLocation} title="Update Location" />
-            <span className="location-text">{locationText}</span>
-          </div>
+          
           {!username ? (
             <>
               <button className="auth-button" onClick={() => setIsLoginModalOpen(true)}>
@@ -203,34 +174,7 @@ const handleOTPSubmit = async () => {
       </header>
       
       {/* Map Modal */}
-      {isMapOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <MapContainer
-              center={selectedLocation}
-              zoom={15}
-              style={{ width: '100%', height: '300px' }}
-            >
-              <TileLayer
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                attribution="&copy; <a href='https://www.openstreetmap.org/copyright'>OpenStreetMap</a> contributors"
-              />
-              <LocationUpdater />
-              <Marker position={selectedLocation}>
-                <Popup>Vị trí của bạn: {selectedLocation.lat}, {selectedLocation.lng}</Popup>
-              </Marker>
-            </MapContainer>
-            <div className="modal-actions">
-              <button onClick={handleConfirmLocation} className="confirm-button">
-                Xác nhận
-              </button>
-              <button onClick={() => setIsMapOpen(false)} className="cancel-button">
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      
 
       {/* Login Modal */}
       {isLoginModalOpen && (

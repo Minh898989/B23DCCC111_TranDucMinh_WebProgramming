@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../Styles/HomePage.css';
 import { FaShoppingCart } from 'react-icons/fa';
+import MapModal from './MapModal'
+import { FaMapMarkerAlt } from 'react-icons/fa'; // Add location icon
 
 
 
-const Homepage = ({ searchTerm,isLoggedIn }) => {
+
+const Homepage = ({ searchTerm,isLoggedIn,}) => {
   const [featuredDishes, setFeaturedDishes] = useState([]);
   const [chickenDishes, setChickenDishes] = useState([]);
   const [noodlesDishes, setNoodlesDishes] = useState([]);
@@ -14,10 +17,13 @@ const Homepage = ({ searchTerm,isLoggedIn }) => {
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartShake, setCartShake] = useState(false);
-  // Trạng thái đăng nhập
-  // Hiển thị thông báo yêu cầu đăng nhập
+  const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState({ lat: 21.0285, lng: 105.8542 }); // Default to Hanoi's coordinates
+  const [locationText, setLocationText] = useState('');
+  const [receiverName, setReceiverName] = useState(''); // Renamed 'name' to 'receiverName'
+  const [phoneNumber, setPhoneNumber] = useState(''); // Defined 'phoneNumber' state
 
-  
 
 
   // Background image state
@@ -111,11 +117,18 @@ const Homepage = ({ searchTerm,isLoggedIn }) => {
     if ( !isLoggedIn ) {
       alert('Vui lòng đăng nhập để thanh toán');
     } else {
-      alert('Thanh toán thành công!');
+      alert(`Xác nhận đơn hàng của `);
+      setIsOrderModalOpen(true);
+      setIsCartOpen(false);
+      
+      
     }
   };
-
-
+  const handleRemoveFromCart = (id) => {
+    const updatedCart = cart.filter((item) => item.id !== id);
+    setCart(updatedCart); // Giả sử `setCart` là hàm cập nhật trạng thái giỏ hàng
+  };
+  
 
   return (
     <div className='home'>
@@ -209,27 +222,122 @@ const Homepage = ({ searchTerm,isLoggedIn }) => {
       </div>
 
       {isCartOpen && (
-        <div className="cart-modal">
-          <div className="cart-modal-content">
-            <h2>Giỏ hàng</h2>
-            <ul>
-              {cart.map((item) => (
-                <li key={item.id}>
-                  {item.name} - {item.quantity} x {formatPrice(item.price)} VNĐ
-                </li>
-              ))}
-            </ul>
-            <p>Tổng tiền: {formatPrice(calculateTotal())} VNĐ</p>
-            <button onClick={handleCheckout} className="checkout-button">
-              Thanh Toán
-            </button>
-          
-           
-            
-            <button onClick={() => setIsCartOpen(false)}>Đóng</button>
-          </div>
+      <div className="cart-modal">
+      <div className="cart-modal-content">
+        <div className="cart-header">
+          <h2>🛒 Giỏ hàng của bạn</h2>
+          <button onClick={() => setIsCartOpen(false)} className="close-button">
+            ❌
+          </button>
         </div>
+        <ul>
+          {cart.map((item) => (
+            <li key={item.id} className="cart-item">
+              <img src={item.image_url} alt={item.name} className="item-image" />
+              <div className="item-details">
+                <p className="item-name">{item.name}</p>
+                <p>
+                  {item.quantity} x {formatPrice(item.price)} VNĐ
+                </p>
+              </div>
+              <button
+                className="delete-button"
+                onClick={() => handleRemoveFromCart(item.id)}
+              >
+                ❌
+              </button>
+            </li>
+          ))}
+        </ul>
+        <p className="total-price">💰 Tổng tiền: {formatPrice(calculateTotal())} VNĐ</p>
+        <button onClick={handleCheckout} className="checkout-button">
+          Đặt hàng
+        </button>
+      </div>
+    </div>
+    
+     
       )}
+      {isOrderModalOpen && (
+  <div className="order-modal">
+    <div className="order-modal-content">
+      <div className="order-header">
+        <h2>Thông tin đặt hàng</h2>
+        <button onClick={() => setIsOrderModalOpen(false)} className="close-button">
+          ❌
+        </button>
+      </div>
+      <div className="order-body">
+      <div className="order-details">
+      <label>
+          <strong>Tên người nhận:</strong>
+          <input
+            type="text"
+            placeholder="Nhập tên người nhận"
+            value={receiverName} // Updated variable name
+            onChange={(e) => setReceiverName(e.target.value)} 
+          />
+        </label>
+          </div>
+        <ul>
+          {cart.map((item) => (
+            <li key={item.id} className="order-item">
+              <img src={item.image_url} alt={item.name} className="item-image" />
+              <span>{item.quantity} x {item.name}</span> - <span>{formatPrice(item.price * item.quantity)} VNĐ</span>
+            </li>
+          ))}
+        </ul>
+        <p><strong>Tổng tiền:</strong> {formatPrice(calculateTotal())} VNĐ</p>
+        <div className="order-details">
+        <label>
+          <strong>Số điện thoại:</strong>
+          <input
+            type="text"
+            placeholder="Nhập số điện thoại của bạn"
+            value={phoneNumber} // Defined 'phoneNumber' as a state variable
+            onChange={(e) => setPhoneNumber(e.target.value)} 
+          />
+        </label>
+        </div>
+        <div className="map-location">
+                  <FaMapMarkerAlt />
+                  <span>{locationText || 'Vui lòng chọn địa chỉ'}</span>
+                  <button onClick={() => setIsMapOpen(true)} className="location-button">Chọn địa chỉ</button>
+                </div>
+       
+      </div>
+      <div className="order-footer">
+      <button
+  onClick={() => {
+    
+    setIsOrderModalOpen(false); // Đóng modal sau khi xác nhận
+    if (!receiverName || !phoneNumber || !locationText) {
+      alert('Vui lòng điền đầy đủ thông tin trước khi đặt hàng!');
+      setIsOrderModalOpen(true);
+
+    } else {
+      alert('Đặt hàng thành công!');
+      setIsOrderModalOpen(false); // Close modal after successful order
+    }
+  }}
+  className="confirm-order-button"
+>
+  Xác nhận đặt hàng
+</button>
+
+      </div>
+    </div>
+  </div>
+)}{isMapOpen && (
+  <MapModal
+    selectedLocation={selectedLocation}
+    setSelectedLocation={setSelectedLocation}
+    setLocationText={setLocationText}
+    setIsMapOpen={setIsMapOpen}
+  />
+)}
+
+
     </div>
     </div>
   );
