@@ -23,7 +23,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
   const [locationText, setLocationText] = useState('');
   const [receiverName, setReceiverName] = useState(''); // Renamed 'name' to 'receiverName'
   const [phoneNumber, setPhoneNumber] = useState(''); // Defined 'phoneNumber' state
-
+ 
 
 
   // Background image state
@@ -38,6 +38,8 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
         .catch((error) => console.error('Error fetching featured dishes:', error));
     }
   }, [currentCategory]);
+
+
 
   useEffect(() => {
     if (currentCategory === 'chicken') {
@@ -116,6 +118,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
   const handleCheckout = () => {
     if ( !isLoggedIn ) {
       alert('Vui lòng đăng nhập để thanh toán');
+      setIsCartOpen(false);
     } else {
       alert(`Xác nhận đơn hàng của `);
       setIsOrderModalOpen(true);
@@ -128,7 +131,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
     const updatedCart = cart.filter((item) => item.id !== id);
     setCart(updatedCart); // Giả sử `setCart` là hàm cập nhật trạng thái giỏ hàng
   };
-  
+
 
   return (
     <div className='home'>
@@ -301,29 +304,50 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
         </div>
         <div className="map-location">
                   <FaMapMarkerAlt />
-                  <span>{locationText || 'Vui lòng chọn địa chỉ'}</span>
+                  <span>{locationText }</span>
                   <button onClick={() => setIsMapOpen(true)} className="location-button">Chọn địa chỉ</button>
                 </div>
        
       </div>
       <div className="order-footer">
       <button
-  onClick={() => {
-    
-    setIsOrderModalOpen(false); // Đóng modal sau khi xác nhận
-    if (!receiverName || !phoneNumber || !locationText) {
-      alert('Vui lòng điền đầy đủ thông tin trước khi đặt hàng!');
-      setIsOrderModalOpen(true);
+          onClick={async () => {
+            const orderData = {
+              receiverName,
+              phoneNumber,
+              location: locationText,
+              items: cart.map((item) => ({
+                name: item.name,
+                soluong: item.quantity,
+              })),
+            };
 
-    } else {
-      alert('Đặt hàng thành công!');
-      setIsOrderModalOpen(false); // Close modal after successful order
-    }
-  }}
-  className="confirm-order-button"
->
-  Xác nhận đặt hàng
-</button>
+            try {
+              const response = await fetch('http://localhost:5000/api/orders', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(orderData),
+              });
+
+              if (response.ok) {
+               // const data = await response.json();
+                alert('Đặt hàng thành công!');
+                setCart([]); // Clear the cart
+                setIsOrderModalOpen(false); // Close the modal
+              } else {
+                throw new Error('Lỗi khi đặt hàng');
+              }
+            } catch (error) {
+              console.error('Error placing order:', error);
+              alert('Đặt hàng thất bại. Vui lòng thử lại.');
+            }
+          }}
+          className="confirm-order-button"
+        >
+          Xác nhận đặt hàng
+        </button>
 
       </div>
     </div>
