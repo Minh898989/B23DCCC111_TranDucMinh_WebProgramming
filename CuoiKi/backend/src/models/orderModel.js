@@ -2,14 +2,7 @@ const db = require('../configs/db');
 
 const Order = {
     
-    findOrderByPhoneNumber: (phoneNumber, callback) => {
-        const query = 'SELECT * FROM orders WHERE phone_number = ?';
-        db.query(query, [phoneNumber], (err, results) => {
-            if (err) return callback(err);
-            callback(null, results[0]); // Trả về kết quả đầu tiên nếu tồn tại
-        });
-    },
-
+    
     createOrder: (orderData, callback) => {
         const { receiverName, phoneNumber, location, total } = orderData;
 
@@ -21,6 +14,36 @@ const Order = {
             callback(null, results.insertId);
         });
     },
+    getAllOrders: (callback) => {
+        const sql = `SELECT * FROM orders`;
+        db.query(sql, (err, results) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+    incrementPurchaseCount: (phoneNumber, callback) => {
+        const sql = `UPDATE orders SET purchase_count = purchase_count + 1 WHERE phone_number = ?`;
+        db.query(sql, [phoneNumber], (err, results) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results);
+        });
+    },
+
+    findOrderByPhoneNumber: (phoneNumber, callback) => {
+        const sql = `SELECT * FROM orders WHERE phone_number = ? ORDER BY id DESC LIMIT 1`;
+        db.query(sql, [phoneNumber], (err, results) => {
+            if (err) {
+                return callback(err);
+            }
+            callback(null, results[0]);
+        });
+    },
+
 };
+
 
 module.exports = Order;
