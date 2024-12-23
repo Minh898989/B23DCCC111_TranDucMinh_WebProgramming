@@ -39,11 +39,11 @@ const createOrder = async (req, res) => {
                 ]);
 
                 const allProducts = [
-                    ...drinksResponse.data,
-                    ...foodsResponse.data,
-                    ...noodlessResponse.data,
-                    ...breadsResponse.data,
-                    ...dessertsResponse.data,
+                    ...drinksResponse.data.map((p) => ({ ...p, category: 'drinks' })),
+                    ...foodsResponse.data.map((p) => ({ ...p, category: 'foods' })),
+                    ...noodlessResponse.data.map((p) => ({ ...p, category: 'noodless' })),
+                    ...breadsResponse.data.map((p) => ({ ...p, category: 'breads' })),
+                    ...dessertsResponse.data.map((p) => ({ ...p, category: 'dessert' })),
                 ];
 
                 const product = allProducts.find((p) => p.name === itemName);
@@ -52,7 +52,21 @@ const createOrder = async (req, res) => {
                     throw new Error(`Item ${itemName} not found`);
                 }
 
-                return { price: product.price, image_url: product.image_url };
+                return { price: product.price,
+                         image_url: product.image_url,
+                         quantity:product.quantity,
+                         id: product.id,
+                         category: product.category,
+                         name: product.name ,
+                         supplier: product.supplier,
+                         description :product.description,
+                         entry_date:product.entry_date,
+                         expiry_date:product.expiry_date,
+                        };
+            };
+            const formatDate = (isoDate) => {
+                const date = new Date(isoDate);
+                return date.toISOString().split('T')[0]; // Chỉ lấy phần YYYY-MM-DD
             };
 
             // Tính tổng tiền và chuẩn bị chi tiết sản phẩm
@@ -60,9 +74,42 @@ const createOrder = async (req, res) => {
             const itemsWithDetails = [];
 
             for (const item of items) {
-                const { price, image_url } = await getPriceAndImage(item.name);
+                const { price, image_url,quantity,category,id,name,supplier, entry_date,expiry_date,description } = await getPriceAndImage(item.name);
                 total += price * item.soluong;
-
+                
+                if (item.soluong > quantity) {
+                    return res.status(400).json({
+                        message: `Not enough stock for item ${item.name}`,
+                        available: quantity,
+                        requested: item.soluong,
+                    });
+                } 
+                try {
+                    const updatedData = {
+                        quantity: quantity - item.soluong,
+                        name,
+                        price,
+                        image_url,
+                        entry_date: formatDate(entry_date), // Chuyển đổi
+                        expiry_date: formatDate(expiry_date),
+                        description ,
+                        supplier,
+                        category, // Có thể cần thêm nếu backend yêu cầu
+                        id,       // Có thể cần thêm nếu backend yêu cầu
+                    };
+                
+                    console.log(`Updating stock for ${item.name}:`, updatedData);
+                
+                    await axios.put(`http://localhost:5000/api/${category}/${id}`, updatedData);
+                } catch (error) {
+                    console.error(`Error updating stock for ${item.name}:`, error.response?.data || error.message);
+                
+                    return res.status(500).json({
+                        message: `Failed to update stock for ${item.name}`,
+                        error: error.response?.data || error.message,
+                    });
+                }
+                
                 itemsWithDetails.push({
                     name: item.name,
                     soluong: item.soluong,
