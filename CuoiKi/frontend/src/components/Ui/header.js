@@ -35,10 +35,13 @@ const Header = ({ setSearchTerm,  onLoginSuccess, }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', loginData);
       if (response.status === 200) {
+        
+
         setUsername(response.data.userName);
         setLoginSuccess(true);
         onLoginSuccess(true); 
         setIsLoginModalOpen(false);
+        
         
       } else {
         alert('Đăng nhập thất bại.');

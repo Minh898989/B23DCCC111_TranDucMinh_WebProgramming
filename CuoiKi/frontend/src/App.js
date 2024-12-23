@@ -5,12 +5,12 @@ import Poster from './components/Ui/Poster';
 const App = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  
   
   return (
     <>
-      <Header setSearchTerm={setSearchTerm} onLoginSuccess={setIsLoggedIn} setUsername={setUsername}  />
-      <Homepage searchTerm={searchTerm} isLoggedIn={isLoggedIn}  username={username} />
+      <Header setSearchTerm={setSearchTerm} onLoginSuccess={setIsLoggedIn}   />
+      <Homepage searchTerm={searchTerm} isLoggedIn={isLoggedIn}  />
       <Poster/>
     </>
   );
