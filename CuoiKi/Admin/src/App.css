@@ -16,3 +16,29 @@
   padding: 20px;
   border-radius: 5px;
 }
+/* Login.css or App.css */
+
+/* Style for logout button */
+.logout-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
+}
+
+.logout-button:active {
+  background-color: #e74c3c;
+}
+

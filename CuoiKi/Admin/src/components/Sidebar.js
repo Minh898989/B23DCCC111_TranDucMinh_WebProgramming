@@ -28,6 +28,7 @@ const Sidebar = ({ onMenuClick }) => {
       <div className="sidebar-item" onClick={() => onMenuClick('Hóa đơn')}>
         <span>Hóa đơn</span>
       </div>
+      
     </div>
   );
 };
