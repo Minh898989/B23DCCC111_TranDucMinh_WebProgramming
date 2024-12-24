@@ -1,0 +1,18 @@
+/* src/App.css */
+.App {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  margin-left: 250px; /* Đảm bảo nội dung bên cạnh sidebar */
+  padding: 20px;
+  flex-grow: 1;
+  transition: all 0.3s ease;
+}
+
+.management-page {
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 5px;
+}
