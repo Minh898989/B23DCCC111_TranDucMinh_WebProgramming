@@ -23,55 +23,78 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
   const [locationText, setLocationText] = useState('');
   const [receiverName, setReceiverName] = useState(''); // Renamed 'name' to 'receiverName'
   const [phoneNumber, setPhoneNumber] = useState(''); // Defined 'phoneNumber' state
- 
-
-
-  // Background image state
-
-
-  // Fetch dishes based on category (same as your current useEffect logic)
-  useEffect(() => {
-    if (currentCategory === 'featured') {
-      fetch('http://localhost:5000/api/drinks')
-        .then((response) => response.json())
-        .then((data) => setFeaturedDishes(data))
-        .catch((error) => console.error('Error fetching featured dishes:', error));
-    }
-  }, [currentCategory]);
-
-
 
   useEffect(() => {
     if (currentCategory === 'chicken') {
       fetch('http://localhost:5000/api/foods')
         .then((response) => response.json())
-        .then((data) => setChickenDishes(data))
+        .then((data) => {
+          const updatedData = data.map((dish) => ({
+            ...dish,
+            uniqueId: `${dish.id}-${currentCategory}`, // Make sure this is unique
+          }));
+          setChickenDishes(updatedData);
+        })
         .catch((error) => console.error('Error fetching chicken dishes:', error));
     }
   }, [currentCategory]);
-
+  
   useEffect(() => {
     if (currentCategory === 'noodles') {
       fetch('http://localhost:5000/api/noodless')
         .then((response) => response.json())
-        .then((data) => setNoodlesDishes(data))
+        .then((data) => {
+          const updatedData = data.map((dish) => ({
+            ...dish,
+            uniqueId: `${dish.id}-${currentCategory}`, // Unique id for noodles
+          }));
+          setNoodlesDishes(updatedData);
+        })
         .catch((error) => console.error('Error fetching noodles dishes:', error));
     }
   }, [currentCategory]);
-
+  
   useEffect(() => {
     if (currentCategory === 'bread') {
       fetch('http://localhost:5000/api/breads')
         .then((response) => response.json())
-        .then((data) => setBreadDishes(data))
+        .then((data) => {
+          const updatedData = data.map((dish) => ({
+            ...dish,
+            uniqueId: `${dish.id}-${currentCategory}`, // Unique id for bread
+          }));
+          setBreadDishes(updatedData);
+        })
         .catch((error) => console.error('Error fetching bread dishes:', error));
     }
   }, [currentCategory]);
+  
   useEffect(() => {
     if (currentCategory === 'dessert') {
-      fetch(' http://localhost:5000/api/dessert')
+      fetch('http://localhost:5000/api/dessert')
         .then((response) => response.json())
-        .then((data) => setDessertDishes(data))
+        .then((data) => {
+          const updatedData = data.map((dish) => ({
+            ...dish,
+            uniqueId: `${dish.id}-${currentCategory}`, // Unique id for dessert
+          }));
+          setDessertDishes(updatedData);
+        })
+        .catch((error) => console.error('Error fetching dessert dishes:', error));
+    }
+  }, [currentCategory]);
+  
+  useEffect(() => {
+    if (currentCategory === 'featured') {
+      fetch('http://localhost:5000/api/drinks')
+        .then((response) => response.json())
+        .then((data) => {
+          const updatedData = data.map((dish) => ({
+            ...dish,
+            uniqueId: `${dish.id}-${currentCategory}`, // Unique id for drinks
+          }));
+          setFeaturedDishes(updatedData);
+        })
         .catch((error) => console.error('Error fetching featured dishes:', error));
     }
   }, [currentCategory]);
@@ -99,18 +122,27 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
   };
 
   const addToCart = (dish) => {
-    const existingItem = cart.find((item) => item.id === dish.id);
+    const uniqueId = `${dish.id}-${currentCategory}`; // Generate uniqueId combining dish id and category
+    const existingItem = cart.find((item) => item.uniqueId === uniqueId); // Check for existing item in cart by uniqueId
+    
     if (existingItem) {
-      setCart(cart.map((item) =>
-        item.id === dish.id ? { ...item, quantity: item.quantity + 1 } : item
-      ));
+      // If item already exists in cart, update quantity
+      setCart(
+        cart.map((item) =>
+          item.uniqueId === uniqueId
+            ? { ...item, quantity: item.quantity + 1 } // Increase quantity by 1
+            : item
+        )
+      );
     } else {
-      setCart([...cart, { ...dish, quantity: 1 }]);
+      // If item doesn't exist in cart, add it
+      setCart([...cart, { ...dish, uniqueId, quantity: 1 }]); // Add the item with quantity 1
     }
-
-    setCartShake(true);
-    setTimeout(() => setCartShake(false), 1500);
+  
+    setCartShake(true); // Trigger shake animation
+    setTimeout(() => setCartShake(false), 1500); // Reset shake after 1.5 seconds
   };
+  
 
   const calculateTotal = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0);
@@ -127,11 +159,11 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
       
     }
   };
-  const handleRemoveFromCart = (id) => {
-    const updatedCart = cart.filter((item) => item.id !== id);
-    setCart(updatedCart); // Giả sử `setCart` là hàm cập nhật trạng thái giỏ hàng
+  const handleRemoveFromCart = (uniqueId) => {
+    const updatedCart = cart.filter((item) => item.uniqueId !== uniqueId);
+    setCart(updatedCart);
   };
-
+  
 
   return (
     <div className='home'>
@@ -235,7 +267,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
         </div>
         <ul>
           {cart.map((item) => (
-            <li key={item.id} className="cart-item">
+            <li key={item.uniqueId} className="cart-item">
               <img src={item.image_url} alt={item.name} className="item-image" />
               <div className="item-details">
                 <p className="item-name">{item.name}</p>
@@ -245,7 +277,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
               </div>
               <button
                 className="delete-button"
-                onClick={() => handleRemoveFromCart(item.id)}
+                onClick={() => handleRemoveFromCart(item.uniqueId)}
               >
                 ❌
               </button>

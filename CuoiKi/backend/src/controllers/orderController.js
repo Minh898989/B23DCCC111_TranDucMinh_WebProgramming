@@ -176,15 +176,54 @@ const createOrder = async (req, res) => {
         res.status(500).json({ message: 'Error creating order', error });
     }
 };
-
 const getAllOrders = (req, res) => {
     Order.getAllOrders((err, orders) => {
         if (err) {
             console.error('Error fetching orders:', err);
             return res.status(500).json({ message: 'Failed to fetch orders', error: err });
         }
-        res.status(200).json({ orders });
+
+        // Lấy chi tiết sản phẩm cho mỗi đơn hàng
+        const orderIds = orders.map(order => order.id);
+
+        Promise.all(orderIds.map(orderId => {
+            return new Promise((resolve, reject) => {
+                OrderItem.getOrderItemsByOrderId(orderId, (err, items) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        // Thêm các chi tiết sản phẩm vào đơn hàng
+                        const itemsWithDetails = items.map((item) => {
+                            // Assuming that each item contains product details like price and image URL
+                            return {
+                                name: item.product_name, // Tên sản phẩm
+                                soluong: item.soluong,  // Số lượng
+                                price: item.price,      // Giá của sản phẩm
+                                image_url: item.image_url, // Hình ảnh sản phẩm
+                            };
+                        });
+                        resolve(itemsWithDetails);
+                    }
+                });
+            });
+        }))
+        .then(allItems => {
+            // Gắn chi tiết sản phẩm vào đơn hàng
+            const ordersWithItems = orders.map((order, index) => ({
+                ...order,
+                items: allItems[index], // Gắn chi tiết sản phẩm vào đơn hàng
+            }));
+
+            res.status(200).json({
+                orders: ordersWithItems,
+            });
+        })
+        .catch(err => {
+            console.error('Error fetching order items:', err);
+            res.status(500).json({ message: 'Failed to fetch order items', error: err });
+        });
     });
 };
+
 
 module.exports = { createOrder, getAllOrders };

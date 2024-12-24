@@ -23,6 +23,8 @@ const Order = {
             callback(null, results);
         });
     },
+ 
+
     incrementPurchaseCount: (phoneNumber, callback) => {
         const sql = `UPDATE orders SET purchase_count = purchase_count + 1 WHERE phone_number = ?`;
         db.query(sql, [phoneNumber], (err, results) => {
