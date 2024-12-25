@@ -35,8 +35,6 @@ const initializeManagerAccount = () => {
     });
 };
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
-
-// Step 1: Register User - Store OTP but delay user creation
 const registerUser = (req, res) => {
     const { name, email, password } = req.body;
 
@@ -54,8 +52,12 @@ const registerUser = (req, res) => {
         const query = `
             INSERT INTO user_otps (name, email, hashed_password, otp_code, expires_at)
             VALUES (?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+    otp_code = VALUES(otp_code),
+    expires_at = VALUES(expires_at)
         `;
         db.query(query, [name, email, hashedPassword, otp, expiresAt], (err) => {
+            console.error('Error while saving OTP:', err);
             if (err) return res.status(500).json({ message: 'Error saving OTP.' });
 
             // Send OTP via email
@@ -99,8 +101,9 @@ const verifyOTP = (req, res) => {
         }
 
         // Create user in users table
-        const { name, email, hashed_password } = otpRecord;
+        const { name, email, hashed_password }  = otpRecord;
         createUser(name, email, hashed_password, (err) => {
+            console.error('Error while creating user:', err);
             if (err) return res.status(500).json({ message: 'Error creating user.' });
 
             // Set is_verified to 1 in the users table
@@ -122,6 +125,8 @@ const verifyOTP = (req, res) => {
 
 
 
+
+
 // Step 3: Login User
 const loginUser = (req, res) => {
     const { email, password } = req.body;
@@ -137,19 +142,20 @@ const loginUser = (req, res) => {
       bcrypt.compare(password, verifiedUser.password, (err, isMatch) => {
         if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
         if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
-  
+        console.log('Verified users:', verifiedUser);
         // Generate JWT token with a 10-minute expiration
         const token = jwt.sign(
-          { id: verifiedUser.id, name: verifiedUser.name, role: verifiedUser.role },
+            
+          { user_id: verifiedUser.user_id, name: verifiedUser.name, role: verifiedUser.role,email:verifiedUser.email },
           secretKey,
-          { expiresIn: '10m' } // Token valid for 10 minutes
+          { expiresIn: '30m' } // Token valid for 10 minutes
         );
   
         // Successful login
         res.status(200).json({
           message: 'Login successful.',
           token, // Send the token to the client
-          userId: verifiedUser.id,
+          user_id: verifiedUser.user_id,
           userName: verifiedUser.name,
           role: verifiedUser.role,
         });
@@ -162,6 +168,7 @@ const findUserByName = (name, callback) => {
     const query = 'SELECT * FROM users WHERE name = ?';
     db.query(query, [name], callback);
 };
+
 
 
 module.exports = { initializeManagerAccount,registerUser, verifyOTP, loginUser};

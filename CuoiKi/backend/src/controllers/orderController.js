@@ -2,22 +2,25 @@ const axios = require('axios');
 const Order = require('../models/orderModel');
 const OrderItem = require('../models/orderItemModel');
 
+
 const createOrder = async (req, res) => {
     try {
         const { receiverName, phoneNumber, location, items } = req.body;
-
+        const user_id = req.verifiedUser?.user_id;
+        console.log('User ID:', user_id); 
         // Kiểm tra số điện thoại trong cơ sở dữ liệu
-        Order.findOrderByPhoneNumber(phoneNumber, async (err, existingOrder) => {
+        
+        Order.findOrderByUserId(user_id, async (err, existingOrder) => {
             if (err) {
-                console.error('Error finding order by phone number:', err);
-                return res.status(500).json({ message: 'Error checking phone number', error: err });
+                console.error('Error finding order by userId:', err);
+                return res.status(500).json({ message: 'Error checking userId', error: err });
             }
 
-            // Nếu số điện thoại đã tồn tại, tăng purchase_count
+            
             if (existingOrder) {
                 try {
                     await new Promise((resolve, reject) => {
-                        Order.incrementPurchaseCount(phoneNumber, (err) => {
+                        Order.incrementPurchaseCountByUserId(user_id, (err) => {
                             if (err) reject(err);
                             else resolve();
                         });
@@ -119,6 +122,7 @@ const createOrder = async (req, res) => {
             }
 
             const orderData = {
+                user_id,
                 receiverName,
                 phoneNumber,
                 location,
@@ -159,6 +163,7 @@ const createOrder = async (req, res) => {
                         order: {
                             id: orderId,
                             receiverName,
+                            user_id,
                             phoneNumber,
                             location,
                             total,
@@ -224,6 +229,52 @@ const getAllOrders = (req, res) => {
         });
     });
 };
+const getOrdersByUserId = (req, res) => {
+    const { user_id } = req.params;
+
+    Order.getOrdersByUserId(user_id, (err, orders) => {
+        if (err) {
+            console.error('Error fetching orders for user:', err);
+            return res.status(500).json({ message: 'Failed to fetch orders', error: err });
+        }
+
+        if (!orders || orders.length === 0) {
+            return res.status(404).json({ message: 'No orders found for this user' });
+        }
+
+        const orderIds = orders.map(order => order.id);
+
+        Promise.all(orderIds.map(orderId => {
+            return new Promise((resolve, reject) => {
+                OrderItem.getOrderItemsByOrderId(orderId, (err, items) => {
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(items.map(item => ({
+                            name: item.product_name,
+                            soluong: item.soluong,
+                            price: item.price,
+                            image_url: item.image_url,
+                        })));
+                    }
+                });
+            });
+        }))
+        .then(allItems => {
+            const ordersWithItems = orders.map((order, index) => ({
+                ...order,
+                items: allItems[index],
+            }));
+
+            res.status(200).json({ orders: ordersWithItems });
+        })
+        .catch(err => {
+            console.error('Error fetching order items:', err);
+            res.status(500).json({ message: 'Failed to fetch order items', error: err });
+        });
+    });
+};
 
 
-module.exports = { createOrder, getAllOrders };
+
+module.exports = { createOrder, getAllOrders,getOrdersByUserId };

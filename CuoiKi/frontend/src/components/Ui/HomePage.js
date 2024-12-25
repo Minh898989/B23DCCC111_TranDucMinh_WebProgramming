@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import '../Styles/HomePage.css';
-import { FaShoppingCart } from 'react-icons/fa';
+import { FaShoppingCart,FaHistory } from 'react-icons/fa';
 import MapModal from './MapModal'
 import { FaMapMarkerAlt } from 'react-icons/fa'; // Add location icon
+import OrderHistoryModal from './History';
+
 
 
 
@@ -22,7 +24,9 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
   const [selectedLocation, setSelectedLocation] = useState({ lat: 21.0285, lng: 105.8542 }); // Default to Hanoi's coordinates
   const [locationText, setLocationText] = useState('');
   const [receiverName, setReceiverName] = useState(''); // Renamed 'name' to 'receiverName'
-  const [phoneNumber, setPhoneNumber] = useState(''); // Defined 'phoneNumber' state
+  const [phoneNumber, setPhoneNumber] = useState(''); 
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  
 
   useEffect(() => {
     if (currentCategory === 'chicken') {
@@ -116,7 +120,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
         )
       : dishes;
   };
-
+  
   const formatPrice = (price) => {
     return price.toLocaleString('vi-VN');
   };
@@ -234,6 +238,7 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
         
         
       </div>
+      
 
       <div className={`cart-icon-container ${cartShake ? 'shake' : ''}`} onClick={() => setIsCartOpen(!isCartOpen)}>
         <FaShoppingCart className="cart-icon" />
@@ -241,7 +246,13 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
           {cart.reduce((total, item) => total + item.quantity, 0)}
         </span>
       </div>
-
+      <button
+            className="history-button"
+            onClick={() => setIsHistoryModalOpen(true)}
+          >
+            <FaHistory className="history-icon" />
+            Lịch sử mua hàng
+          </button>
       <div className="dishes-container">
         {getCurrentDishes().map((dish) => (
           <div className="dish-card" key={dish.id}>
@@ -360,9 +371,17 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
             };
 
             try {
+              const token = localStorage.getItem('token');
+              console.log('Token:', token);  // Lấy token từ localStorage
+        if (!token) {
+            alert('Vui lòng đăng nhập để tiếp tục.');
+            return;
+        }
               const response = await fetch('http://localhost:5000/api/orders', {
+                
                 method: 'POST',
                 headers: {
+                  Authorization: `Bearer ${token}`,
                   'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(orderData),
@@ -399,7 +418,11 @@ const Homepage = ({ searchTerm,isLoggedIn,}) => {
     setLocationText={setLocationText}
     setIsMapOpen={setIsMapOpen}
   />
-)}
+  
+)}<OrderHistoryModal
+isOpen={isHistoryModalOpen}
+onClose={() => setIsHistoryModalOpen(false)}
+/>
 
 
     </div>

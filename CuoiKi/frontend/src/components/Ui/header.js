@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { FaShoppingCart, FaSearch,FaUserPlus ,FaUserAlt,FaSmile } from 'react-icons/fa';
-
+import {  FaSearch,FaUserPlus ,FaUserAlt,FaSmile,} from 'react-icons/fa';
+import OrderHistoryModal from './History';
 import 'leaflet/dist/leaflet.css';
 import '../Styles/header.css';
 import axios from 'axios';
@@ -20,6 +20,7 @@ const Header = ({ setSearchTerm,  onLoginSuccess, }) => {
   const [registerData, setRegisterData] = useState({ name: '', email: '', password: '' }); // For registration
   const [otpCode, setOtpCode] = useState('');
   const [loginSuccess, setLoginSuccess] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   // Handle input change for both login and registration
   const handleInputChange = (e, type) => {
     const { name, value } = e.target;
@@ -35,8 +36,11 @@ const Header = ({ setSearchTerm,  onLoginSuccess, }) => {
     try {
       const response = await axios.post('http://localhost:5000/api/users/login', loginData);
       if (response.status === 200) {
-        
-
+        const token = response.data.token; 
+        const user_id = response.data.user_id;
+        // Lưu token vào localStorage
+        localStorage.setItem('token', token);
+        localStorage.setItem('user_id', user_id); 
         setUsername(response.data.userName);
         setLoginSuccess(true);
         onLoginSuccess(true); 
@@ -106,6 +110,9 @@ const handleOTPSubmit = async () => {
   const handleSearch = () => {
     setSearchTerm(searchInput); // Cập nhật từ khóa tìm kiếm
   };
+  const toggleHistoryModal = () => {
+    setIsHistoryModalOpen(!isHistoryModalOpen);
+  };
 
   
  
@@ -148,6 +155,9 @@ const handleOTPSubmit = async () => {
           
           {!username ? (
             <>
+                <button className="auth-button" onClick={toggleHistoryModal}>
+  Lịch sử
+</button>
               <button className="auth-button" onClick={() => setIsLoginModalOpen(true)}>
               <FaUserAlt className="auth-icon" />
                 Đăng nhập
@@ -167,7 +177,8 @@ const handleOTPSubmit = async () => {
           </div>
            
           )}
-          <FaShoppingCart className="cart-icon" />
+      
+
           
         </div>
        
@@ -268,7 +279,13 @@ const handleOTPSubmit = async () => {
             </div>
           </div>
         </div>
+      )}{isHistoryModalOpen && (
+        <OrderHistoryModal
+          isOpen={isHistoryModalOpen}
+          onClose={toggleHistoryModal}
+        />
       )}
+      
     </>
   );
 };
