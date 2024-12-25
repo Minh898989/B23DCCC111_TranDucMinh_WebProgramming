@@ -8,7 +8,7 @@ const initializeManagerAccount = () => {
     const defaultManager = {
         name: 'Admin',
         email: 'minhhh270805@gmail.com',
-        password: '27082005', // Thay thế bằng mật khẩu mạnh hơn trong thực tế
+        password: '27082005', 
     };
 
     const query = 'SELECT * FROM users WHERE email = ?';
@@ -38,17 +38,15 @@ const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString()
 const registerUser = (req, res) => {
     const { name, email, password } = req.body;
 
-    // Check if the email already exists
+
     findUserByEmail(email, async (err, user) => {
         if (err) return res.status(500).json({ message: 'Database error.' });
         if (user.length) return res.status(400).json({ message: 'Email already exists.' });
 
-        // Hash password and generate OTP
+   
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = generateOTP();
-        const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // OTP valid for 10 minutes
-
-        // Temporarily save OTP, name, email, and hashed password
+        const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
         const query = `
             INSERT INTO user_otps (name, email, hashed_password, otp_code, expires_at)
             VALUES (?, ?, ?, ?, ?)
@@ -60,7 +58,7 @@ const registerUser = (req, res) => {
             console.error('Error while saving OTP:', err);
             if (err) return res.status(500).json({ message: 'Error saving OTP.' });
 
-            // Send OTP via email
+            
             const mailOptions = {
                 from: 'minhhh270805@gmail.com',
                 to: email,
@@ -83,11 +81,11 @@ const registerUser = (req, res) => {
     });
 };
 
-// Step 2: Verify OTP and Create User
+
 const verifyOTP = (req, res) => {
     const { email, otp } = req.body;
 
-    // Retrieve the pending user info from user_otps table
+ 
     const query = 'SELECT * FROM user_otps WHERE email = ? AND otp_code = ?';
     db.query(query, [email, otp], (err, results) => {
         if (err) return res.status(500).json({ message: 'Database error.' });
@@ -95,25 +93,24 @@ const verifyOTP = (req, res) => {
 
         const otpRecord = results[0];
 
-        // Check if the OTP has expired
+     
         if (new Date() > otpRecord.expires_at) {
             return res.status(400).json({ message: 'OTP has expired.' });
         }
 
-        // Create user in users table
+    
         const { name, email, hashed_password }  = otpRecord;
         createUser(name, email, hashed_password, (err) => {
             console.error('Error while creating user:', err);
             if (err) return res.status(500).json({ message: 'Error creating user.' });
 
-            // Set is_verified to 1 in the users table
             const updateVerifiedQuery = `
                 UPDATE users SET is_verified = 1 WHERE email = ?
             `;
             db.query(updateVerifiedQuery, [email], (err) => {
                 if (err) return res.status(500).json({ message: 'Error updating verification status.' });
 
-                // Delete the OTP record after successful verification
+             
                 const deleteOTPQuery = 'DELETE FROM user_otps WHERE email = ?';
                 db.query(deleteOTPQuery, [email]);
 
@@ -127,31 +124,30 @@ const verifyOTP = (req, res) => {
 
 
 
-// Step 3: Login User
+
 const loginUser = (req, res) => {
     const { email, password } = req.body;
   
-    // Find the user by email
+
     findUserByEmail(email, (err, user) => {
       if (err) return res.status(500).json({ message: 'Database error.' });
       if (!user.length) return res.status(404).json({ message: 'User not found.' });
   
       const verifiedUser = user[0];
   
-      // Compare the provided password with the stored hashed password
       bcrypt.compare(password, verifiedUser.password, (err, isMatch) => {
         if (err) return res.status(500).json({ message: 'Error comparing passwords.' });
         if (!isMatch) return res.status(400).json({ message: 'Incorrect password.' });
         console.log('Verified users:', verifiedUser);
-        // Generate JWT token with a 10-minute expiration
+     
         const token = jwt.sign(
             
           { user_id: verifiedUser.user_id, name: verifiedUser.name, role: verifiedUser.role,email:verifiedUser.email },
           secretKey,
-          { expiresIn: '30m' } // Token valid for 10 minutes
+          { expiresIn: '30m' } 
         );
   
-        // Successful login
+        
         res.status(200).json({
           message: 'Login successful.',
           token, // Send the token to the client
