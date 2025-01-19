@@ -16,7 +16,7 @@ const Footer = () => {
       </div>
       <div className="footer-section links-section">
         <ul>
-          <li> hệ với chúng tôi</li>
+          <li>Liên hệ với chúng tôi</li>
           <li>Chính sách và quy định chung</li>
           <li>Chính sách thanh toán khi đặt hàng</li>
           <li>Chính sách hoạt động</li>
